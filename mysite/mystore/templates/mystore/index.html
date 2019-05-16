@@ -1,0 +1,11 @@
+{% if latest_order_list %}
+    <h1>List of orders</h1>
+    <ul>
+    {% for order in latest_order_list %}
+        <li><a href="{% url 'mystore:detail' order.id  %}">{{ order.order }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No orders in database.</p>
+{% endif %}
+<A href="{% url 'mystore:add_order' %}"> Add order</A>

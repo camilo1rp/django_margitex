@@ -1,0 +1,15 @@
+<h1>{{ order.order }}</h1>
+
+<h2>{{ order.client}}</h2>
+{%for item in order.items.all%}
+    <h3>{{item.item_name}}---------price: {{ item.price}}</h3>
+    <a href="/"
+{% endfor%}
+<p>Total = {{ order.add_items }}</p>
+
+<h2>Add items to order</h2>
+        <form action="." method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Add items"></p>
+        </form>

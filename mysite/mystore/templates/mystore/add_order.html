@@ -1,0 +1,6 @@
+<h2>Add a new order</h2>
+        <form action="." method="post">
+            {{ order_form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Add order"></p>
+        </form>
