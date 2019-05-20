@@ -23,9 +23,9 @@ class DetailView(generic.DetailView):
     def get_queryset(self):
         return Order.objects.all()
 """
-def detail(request, order_id):
+def detail(request, order_id, item_rmv=None):
     order = get_object_or_404(Order, pk=order_id)
-
+    order.items.remove(item_rmv)
     if request.method == 'POST':
         form = SelForm(request.POST or None, instance=order)
         order_items = order.items

@@ -3,7 +3,7 @@
 <h2>{{ order.client}}</h2>
 {%for item in order.items.all%}
     <h3>{{item.item_name}}---------price: {{ item.price}}</h3>
-    <a href="/"
+    <a href="{% url 'mystore:item_removed' order.id item.id %}">Remove item</a>
 {% endfor%}
 <p>Total = {{ order.add_items }}</p>
 

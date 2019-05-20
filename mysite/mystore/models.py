@@ -15,6 +15,7 @@ class Order(models.Model):
     def add_items(self):
         return self.items.aggregate(total=models.Sum('price'))['total']
 
+
 class Item(models.Model):
     STATUS_CHOICES = (('outStock', 'OutStock'),
                       ('inStock', 'InStock'),)
