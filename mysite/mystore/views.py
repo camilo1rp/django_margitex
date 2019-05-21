@@ -26,14 +26,21 @@ class DetailView(generic.DetailView):
 def detail(request, order_id, item_rmv=None):
     order = get_object_or_404(Order, pk=order_id)
     order.items.remove(item_rmv)
+    #order_items = order.items.all()
+    order_items_qty = order.qty_set.all()
     if request.method == 'POST':
-        form = SelForm(request.POST or None, instance=order)
-        order_items = order.items
-        # An order was added
+        form = SelForm(request.POST )
         if form.is_valid():
-            new_items = form.save(commit=False)
-            new_items.items.add(*form.cleaned_data['items'])
-            new_items.save()
+            new_item = form.save(commit=False)
+            item_form= new_item.item
+            for qty in order_items_qty:
+                if item_form == qty.item:
+                    qty.quantity += 1
+                    qty.save()
+                    #order.save()
+                    return HttpResponseRedirect(reverse('mystore:detail', args=(order.id,)))
+            new_item.order = order
+            new_item.save()
             return HttpResponseRedirect(reverse('mystore:detail', args=(order.id,)))
     else:
         form = SelForm()

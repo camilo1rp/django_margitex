@@ -1,11 +1,13 @@
-<h1>{{ order.order }}</h1>
+{% load index %}
+<h1>Pedido: {{ order.order }}</h1>
 
-<h2>{{ order.client}}</h2>
-{%for item in order.items.all%}
-    <h3>{{item.item_name}}---------price: {{ item.price}}</h3>
-    <a href="{% url 'mystore:item_removed' order.id item.id %}">Remove item</a>
+<h2>Cliente: {{ order.client}}</h2>
+<br>
+{%for item_order in order.qty_set.all%}
+    <p>{{item_order.item.item_name}}_____Precio(c/u): {{item_order.item.price}}_____ Cantidad: {{ item_order.quantity }}_____Precio Total: {{item_order.add_same_items}}</p>
+    <a href="{% url 'mystore:item_removed' order.id item_order.item.id %}">Remover producto</a>
 {% endfor%}
-<p>Total = {{ order.add_items }}</p>
+<p>Total = {{ order.add_all_items}}</p>
 
 <h2>Add items to order</h2>
         <form action="." method="post">

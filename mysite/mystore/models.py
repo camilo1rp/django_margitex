@@ -10,10 +10,17 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     client = models.CharField(max_length=25)
     added_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    items = models.ManyToManyField('Item')
+    items = models.ManyToManyField('Item', through='qty')
 
     def add_items(self):
         return self.items.aggregate(total=models.Sum('price'))['total']
+
+    def add_all_items(self):
+        cnt = 0
+        for qty in self.qty_set.all():
+            cnt += qty.add_same_items()
+        return cnt
+
 
 
 class Item(models.Model):
@@ -43,6 +50,16 @@ class Item(models.Model):
         ordering = ('-created',)
     def __str__(self):
         return self.item_name
+
+class qty(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    def add_same_items(self):
+        return  self.quantity * self.item.price
+
+
 
 
 
