@@ -1,12 +1,12 @@
 from django import forms
-from .models import Order, Item, qty
+from .models import Order, Item, Qty, Institution
 from django.forms.widgets import *
 
 class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ('order', 'client', 'added_by')
+        fields = ('order', 'client', 'added_by', 'comments')
 """
 class SelForm(forms.ModelForm):
 
@@ -23,11 +23,14 @@ class SelForm(forms.ModelForm):
 class SelForm(forms.ModelForm):
 
     class Meta:
-        model = qty
+        model = Qty
         fields = ('item',)
 
     def __init__(self, *args, **kwargs):
         super(SelForm, self).__init__(*args, **kwargs)
-
-        self.fields["item"].widget = RadioSelect()
+        #if institution != None:
+          #  self.fields["item"].widget = CheckboxSelectMultiple()
+           # self.fields["item"].queryset = Item.objects.filter(institution=institution)
+        #else:
+        #self.fields["item"].widget = CheckboxSelectMultiple()
         self.fields["item"].queryset = Item.objects.all()

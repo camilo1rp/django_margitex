@@ -4,14 +4,15 @@
 <h2>Cliente: {{ order.client}}</h2>
 <br>
 {%for item_order in order.qty_set.all%}
-    <p>{{item_order.item.item_name}}_____Precio(c/u): {{item_order.item.price}}_____ Cantidad: {{ item_order.quantity }}_____Precio Total: {{item_order.add_same_items}}</p>
-    <a href="{% url 'mystore:item_removed' order.id item_order.item.id %}">Remover producto</a>
+    <p>{{item_order.item.name}}_____Precio(c/u): {{item_order.item.price}}_____ Cantidad: {{ item_order.quantity }}_____Precio Total: {{item_order.add_same_items}}</p>
+    <a href="{% url 'mystore:item_removed' order.id item_order.id %}">Remover producto</a>
 {% endfor%}
 <p>Total = {{ order.add_all_items}}</p>
-
+<a href="/mystore/{{ order.id }}/ManuelAya"> Manuel Aya</a>
 <h2>Add items to order</h2>
         <form action="." method="post">
             {{ form.as_p }}
             {% csrf_token %}
             <p><input type="submit" value="Add items"></p>
         </form>
+<a href="{% url 'mystore:index' %}"> volver a inicio</a>
