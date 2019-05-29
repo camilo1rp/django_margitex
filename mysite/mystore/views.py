@@ -5,7 +5,7 @@ from django.views import generic
 from django.utils import timezone
 from .forms import OrderForm, SelForm
 
-from .models import Order, Item, Qty
+from .models import Order, Item, Institution
 
 
 class IndexView(generic.ListView):
@@ -18,7 +18,6 @@ class IndexView(generic.ListView):
 
 def detail(request, order_id, item_rmv=None, institution=None):
     order = get_object_or_404(Order, pk=order_id)
-    #order.items.remove(item_rmv)
 
     if item_rmv != None:
         item_to_remove = order.qty_set.get(id=item_rmv)
@@ -37,7 +36,7 @@ def detail(request, order_id, item_rmv=None, institution=None):
         form = SelForm(request.POST)
         if form.is_valid():
             new_item = form.save(commit=False)
-            item_form= new_item.item
+            item_form = new_item.item
             for qty in order_items_qty:
                 if item_form == qty.item:
                     qty.quantity += 1
@@ -47,12 +46,22 @@ def detail(request, order_id, item_rmv=None, institution=None):
             new_item.order = order
             new_item.save()
             return HttpResponseRedirect(reverse('mystore:detail', args=(order.id,)))
+        else:
+            try:
+                institution = Institution.objects.get(pk=request.POST['inst'])
+            except (KeyError, Institution.DoesNotExist):
+                # Redisplay the question voting form.
+                form = SelForm()
+                form.fields["item"].queryset = Item.objects.all()
+            else:
+                form = SelForm()
+                form.fields["item"].queryset = Item.objects. \
+                    filter(institution=institution)
+
     else:
         form = SelForm()
-
-        #form.fields["item"].queryset = Item.objects.filter(college='manuel')
     return render(request, 'mystore/detail.html', {'form': form,
-                                                   'order': order},)
+                                                   'order': order,},)
 
 
 def add_order(request):
@@ -67,3 +76,8 @@ def add_order(request):
     else:
         order_form = OrderForm()
     return render(request, 'mystore/add_order.html', {'order_form': order_form})
+
+def filter(request, order_id ):
+    order = get_object_or_404(Order, pk=order_id)
+    college = Institution.objects.all()
+    return render(request, 'mystore/filter.html', {'order': order, 'college':college},)

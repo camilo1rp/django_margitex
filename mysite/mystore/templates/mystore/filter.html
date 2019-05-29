@@ -1,0 +1,11 @@
+<form action="{% url 'mystore:institution' order.id %}" method="post">
+    {% csrf_token %}
+    <label for="inst">Colegio</label>
+    <select id="inst" name="inst">
+        {%for cole in college%}
+            <option value="{{ cole }}">{{cole.name}}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="seleccionar">
+</form>
+

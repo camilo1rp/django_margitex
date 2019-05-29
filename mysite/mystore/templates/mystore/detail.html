@@ -1,4 +1,5 @@
-{% load index %}
+{% load mystore_tags %}
+<!DOCTYPE html>
 <h1>Pedido: {{ order.order }}</h1>
 
 <h2>Cliente: {{ order.client}}</h2>
@@ -9,6 +10,22 @@
 {% endfor%}
 <p>Total = {{ order.add_all_items}}</p>
 <a href="/mystore/{{ order.id }}/ManuelAya"> Manuel Aya</a>
+<a href="{% url 'mystore:filter' order.id %}">filter</a>
+<a href="/mystore/detail2/">filter2</a>
+<div>
+<form action="{% url 'mystore:detail' order.id %}" method="post">
+    {% csrf_token %}
+    <label for="inst">Colegio</label>
+    <select id="inst" name="inst">
+        {% all_institutions %}
+    </select>
+    <label for="size">size</label>
+    <select id="size" name="size">
+        {% all_sizes %}
+    </select>
+    <input type="submit" value="seleccionar">
+</form>
+</div>
 <h2>Add items to order</h2>
         <form action="." method="post">
             {{ form.as_p }}

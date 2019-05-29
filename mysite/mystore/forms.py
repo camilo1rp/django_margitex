@@ -25,12 +25,14 @@ class SelForm(forms.ModelForm):
     class Meta:
         model = Qty
         fields = ('item',)
-
-    def __init__(self, *args, **kwargs):
+"""
+    def __init__(self, institution = None, *args, **kwargs):
         super(SelForm, self).__init__(*args, **kwargs)
-        #if institution != None:
-          #  self.fields["item"].widget = CheckboxSelectMultiple()
-           # self.fields["item"].queryset = Item.objects.filter(institution=institution)
-        #else:
-        #self.fields["item"].widget = CheckboxSelectMultiple()
-        self.fields["item"].queryset = Item.objects.all()
+
+        if institution == None:
+            # self.fields["item"].widget = CheckboxSelectMultiple()
+            self.fields["item"].queryset = Item.objects.all()
+        else:
+            self.fields["item"].widget = CheckboxSelectMultiple()
+            self.fields["item"].queryset = Item.objects.filter(institution=institution)
+"""
