@@ -43,14 +43,11 @@ class Item(models.Model):
 
 
 class Qty(models.Model):
-    PENDING_CHOICES = (('pending', 'Pendiente'),
-                    ('dispatched', 'Entregado'),)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
-    pending = models.CharField(max_length=10,
-                                 choices=PENDING_CHOICES,
-                                 default='pending',)
+    pending = models.IntegerField(default=1)
+    total = models.IntegerField(default=0)
 
     def add_same_items(self):
         return  self.quantity * self.item.price

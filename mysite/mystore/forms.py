@@ -6,7 +6,7 @@ class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ('order', 'client', 'added_by', 'comments')
+        fields = ('order', 'client', 'added_by')
 """
 class SelForm(forms.ModelForm):
 

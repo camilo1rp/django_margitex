@@ -4,9 +4,9 @@
 <!DOCTYPE html>
 {% block title %}{{ order.order }}{% endblock %}
 {% block content %}
-<h2>Pedido: {{ order.order }}</h2>
-
+<h2>Pedido: 0{{ order.id }}</h2>
 <h3>Cliente: {{ order.client}}</h3>
+<h3>Fecha: {{ order.created}}</h3>
 <br>
 <table>
     <tr>
@@ -14,15 +14,19 @@
         <th>Precio(unidad)</th>
         <th>Cantidad</th>
         <th>Total</th>
+        <th>Pendiente</th>
         <th>Remover</th>
+        <th></th>
     </tr>
     {%for item_order in order.qty_set.all%}
     <tr>
-        <td>{{item_order.item.name}} T:{{item_order.item.size}} </td>
+        <td>{{item_order.item.type}} {{item_order.item.name}} T:{{item_order.item.size}} </td>
         <td>{{item_order.item.price}}</td>
         <td>{{ item_order.quantity }}</td>
         <td>{{item_order.add_same_items}}</td>
-        <td><a href="{% url 'mystore:item_removed' order.id item_order.id %}">quitar</a></td>
+        <td>{{ item_order.pending }} </td>
+        <td><a href="{% url 'mystore:item_removed' order.id item_order.id %}">Quitar</a></td>
+        <td><a href="{% url 'mystore:item_dispatch' order.id item_order.id item_order.pending %}">entregado</a></td>
     </tr>
     {% endfor%}
 </table>

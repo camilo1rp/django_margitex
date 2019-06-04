@@ -16,7 +16,7 @@ class IndexView(generic.ListView):
         """Return the last five published questions."""
         return Order.objects.all()
 
-def detail(request, order_id, item_rmv=None, institution=None, size=None):
+def detail(request, order_id, item_rmv=None, institution=None, size=None, item_dispatch=None, item_pending=None):
     order = get_object_or_404(Order, pk=order_id)
 
     #check if any filter and assign the response
@@ -40,8 +40,19 @@ def detail(request, order_id, item_rmv=None, institution=None, size=None):
             return response_page
         else:
             item_to_remove.quantity = item_to_remove.quantity - 1
-            item_to_remove.save()
+            if item_to_remove.pending == 0:
+                item_to_remove.save()
+            else:
+                item_to_remove.pending -= 1
+                item_to_remove.save()
             return response_page
+
+    if item_dispatch != None:
+        item_dispatched = order.qty_set.get(id=item_dispatch)
+        if item_pending !=0:
+            item_dispatched.pending -= 1
+            item_dispatched.save()
+        return response_page
 
     order_items_qty = order.qty_set.all()
     if request.method == 'POST':
@@ -52,6 +63,7 @@ def detail(request, order_id, item_rmv=None, institution=None, size=None):
             for qty in order_items_qty:
                 if item_form == qty.item:
                     qty.quantity += 1
+                    qty.pending +=1
                     qty.save()
                     order.save()
                     return response_page
@@ -109,7 +121,4 @@ def add_order(request):
         order_form = OrderForm()
     return render(request, 'mystore/add_order.html', {'order_form': order_form})
 
-def filter(request, order_id ):
-    order = get_object_or_404(Order, pk=order_id)
-    college = Institution.objects.all()
-    return render(request, 'mystore/filter.html', {'order': order, 'college':college},)
+
