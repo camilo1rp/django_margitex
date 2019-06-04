@@ -1,0 +1,41 @@
+li a {
+    color: black;
+a {
+    color:#00abff;
+    text-decoration:none;
+}
+
+body {
+    margin:0;
+    padding:0;
+    font-family:helvetica, sans-serif;
+}
+
+
+h1 {
+    font-weight:normal;
+    border-bottom:1px solid #bbb;
+    padding:0 0 10px 0;
+    color: blue;
+}
+
+h2 {
+    font-weight:normal;
+    margin:30px 0 0;
+}
+#content {
+    float:left;
+    width:60%;
+    padding:0 0 0 30px;
+}
+table, th, td {
+    border: 1px solid black;
+    width: 100%;
+}
+#sidebar {
+    float:right;
+    width:30%;
+    padding:10px;
+    background:#efefef;
+    height:100%;
+}

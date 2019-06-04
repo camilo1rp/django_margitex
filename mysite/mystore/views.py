@@ -16,21 +16,33 @@ class IndexView(generic.ListView):
         """Return the last five published questions."""
         return Order.objects.all()
 
-def detail(request, order_id, item_rmv=None, institution=None):
+def detail(request, order_id, item_rmv=None, institution=None, size=None):
     order = get_object_or_404(Order, pk=order_id)
 
+    #check if any filter and assign the response
+    if institution == None:
+        response_page = HttpResponseRedirect(reverse('mystore:detail', args=(order.id,)))
+    else:
+        if size == None:
+            response_page = HttpResponseRedirect(reverse('mystore:institution',
+                                                         args=(order.id,
+                                                               institution)))
+        else:
+            response_page = HttpResponseRedirect(reverse('mystore:size', args=(order.id,
+                                                                      institution,
+                                                                      size)))
+    #check if an item is to be removed
     if item_rmv != None:
         item_to_remove = order.qty_set.get(id=item_rmv)
         if item_to_remove.quantity == 1:
             order.qty_set.filter(id=item_rmv).delete()
             order.save()
-            return HttpResponseRedirect(reverse('mystore:detail', args=(order.id,)))
+            return response_page
         else:
             item_to_remove.quantity = item_to_remove.quantity - 1
             item_to_remove.save()
-            return HttpResponseRedirect(reverse('mystore:detail', args=(order.id,)))
+            return response_page
 
-    #order_items = order.items.all()
     order_items_qty = order.qty_set.all()
     if request.method == 'POST':
         form = SelForm(request.POST)
@@ -42,26 +54,46 @@ def detail(request, order_id, item_rmv=None, institution=None):
                     qty.quantity += 1
                     qty.save()
                     order.save()
-                    return HttpResponseRedirect(reverse('mystore:detail', args=(order.id,)))
+                    return response_page
             new_item.order = order
             new_item.save()
-            return HttpResponseRedirect(reverse('mystore:detail', args=(order.id,)))
+            return response_page
         else:
             try:
                 institution = Institution.objects.get(pk=request.POST['inst'])
+                size = request.POST['size']
             except (KeyError, Institution.DoesNotExist):
                 # Redisplay the question voting form.
                 form = SelForm()
                 form.fields["item"].queryset = Item.objects.all()
             else:
+                if size == None:
+                    form.fields["item"].queryset = Item.objects.\
+                        filter(institution=institution)
+                    return HttpResponseRedirect(reverse('mystore:institution', args=(order.id,
+                                                         institution)))
+                else:
+                    form = SelForm()
+                    form.fields["item"].queryset = Item.objects. \
+                        filter(institution=institution, size=size)
+                    return HttpResponseRedirect(reverse('mystore:size', args=(order.id,
+                                                                              institution,
+                                                                              size)))
+    else:
+        if institution == None:
+            form = SelForm()
+        else:
+            if size == None:
                 form = SelForm()
                 form.fields["item"].queryset = Item.objects. \
-                    filter(institution=institution)
-
-    else:
-        form = SelForm()
+                                    filter(institution=institution)
+            else:
+                form = SelForm()
+                form.fields["item"].queryset = Item.objects. \
+                    filter(institution=institution, size=size)
     return render(request, 'mystore/detail.html', {'form': form,
-                                                   'order': order,},)
+                                                   'order': order,
+                                                   'institution': institution},)
 
 
 def add_order(request):

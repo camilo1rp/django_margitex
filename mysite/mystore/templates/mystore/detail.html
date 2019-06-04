@@ -1,35 +1,56 @@
+{% extends "mystore/base.html" %}
 {% load mystore_tags %}
-<!DOCTYPE html>
-<h1>Pedido: {{ order.order }}</h1>
 
-<h2>Cliente: {{ order.client}}</h2>
+<!DOCTYPE html>
+{% block title %}{{ order.order }}{% endblock %}
+{% block content %}
+<h2>Pedido: {{ order.order }}</h2>
+
+<h3>Cliente: {{ order.client}}</h3>
 <br>
-{%for item_order in order.qty_set.all%}
-    <p>{{item_order.item.name}}_____Precio(c/u): {{item_order.item.price}}_____ Cantidad: {{ item_order.quantity }}_____Precio Total: {{item_order.add_same_items}}</p>
-    <a href="{% url 'mystore:item_removed' order.id item_order.id %}">Remover producto</a>
-{% endfor%}
+<table>
+    <tr>
+        <th>Producto</th>
+        <th>Precio(unidad)</th>
+        <th>Cantidad</th>
+        <th>Total</th>
+        <th>Remover</th>
+    </tr>
+    {%for item_order in order.qty_set.all%}
+    <tr>
+        <td>{{item_order.item.name}} T:{{item_order.item.size}} </td>
+        <td>{{item_order.item.price}}</td>
+        <td>{{ item_order.quantity }}</td>
+        <td>{{item_order.add_same_items}}</td>
+        <td><a href="{% url 'mystore:item_removed' order.id item_order.id %}">quitar</a></td>
+    </tr>
+    {% endfor%}
+</table>
 <p>Total = {{ order.add_all_items}}</p>
-<a href="/mystore/{{ order.id }}/ManuelAya"> Manuel Aya</a>
-<a href="{% url 'mystore:filter' order.id %}">filter</a>
-<a href="/mystore/detail2/">filter2</a>
 <div>
-<form action="{% url 'mystore:detail' order.id %}" method="post">
-    {% csrf_token %}
-    <label for="inst">Colegio</label>
-    <select id="inst" name="inst">
-        {% all_institutions %}
-    </select>
-    <label for="size">size</label>
-    <select id="size" name="size">
-        {% all_sizes %}
-    </select>
-    <input type="submit" value="seleccionar">
-</form>
-</div>
-<h2>Add items to order</h2>
-        <form action="." method="post">
-            {{ form.as_p }}
+    <h2>Agregar producto a la orden</h2>
+    {% if institution %}
+        <p>Flltro: {{ institution }}</p>
+        <a href="{% url 'mystore:detail' order.id %}">limpiar filtro</a>
+    {% else %}
+        <form action="{% url 'mystore:detail' order.id %}" method="post">
             {% csrf_token %}
-            <p><input type="submit" value="Add items"></p>
+            <label for="inst">Colegio</label>
+            <select id="inst" name="inst">
+                {% all_institutions %}
+            </select>
+            <label for="size">size</label>
+            <select id="size" name="size">
+                {% all_sizes %}
+            </select>
+            <input type="submit" value="filtrar">
         </form>
+    {% endif %}
+</div>
+<form action="." method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="Add items"></p>
+</form>
 <a href="{% url 'mystore:index' %}"> volver a inicio</a>
+{% endblock %}
