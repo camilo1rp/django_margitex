@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views import generic
+from django.views.generic import ListView
 from django.utils import timezone
 from .forms import OrderForm, SelForm, ConfirmForm, EmailPostForm, \
     SearchForm, ClientSearchForm
@@ -12,20 +12,40 @@ from datetime import datetime, timedelta
 from django.contrib.postgres.search import SearchVector, SearchQuery, \
     SearchRank, TrigramSimilarity
 from django.db.models.functions import Greatest
+from django.views.generic.detail import SingleObjectMixin
 from django.core.paginator import Paginator, EmptyPage,\
 PageNotAnInteger
 
-class IndexView(generic.ListView):
-    #template_name = 'mystore/index.html'
-    #context_object_name = 'latest_order_list'
-    queryset = Order.objects.all()
-    context_object_name = 'orders'
-    paginate_by = 5
-    template_name = 'mystore/index.html'
+def IndexView(request):
+    form = SearchForm()
+    query = None
+    if 'pedido' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['pedido']
+            search_vector = SearchVector('id', 'client')
+            search_query =SearchQuery(query)
+            results = Order.objects.annotate(search=search_vector, rank=SearchRank(search_vector, search_query))\
+                .filter(search=search_query).order_by('-rank')
+    else:
+        results = Order.objects.all().order_by('created')
+    #context_object_name = 'orders'
+    object_list = results
+    paginator = Paginator(object_list, 3)  # 3 orders in each page
+    page = request.GET.get('page')
+    try:
+        orders = paginator.page(page)
+    except PageNotAnInteger:
+    # If page is not an integer deliver the first page
+        orders = paginator.page(1)
+    except EmptyPage:
+    # If page is out of range deliver last page of results
+        orders = paginator.page(paginator.num_pages)
 
-    #def get_queryset(self):
-        #return Order.objects.all()
-
+    return render(request, 'mystore/index.html', {'form': form,
+                                                   'query': query,
+                                                   'orders': orders
+                                                   })
 
 def detail(request, order_id, item_rmv=None, institution=None,
            size=None, item_dispatch=None, item_pending=None, item_missing=None):

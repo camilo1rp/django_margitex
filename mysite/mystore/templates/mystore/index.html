@@ -4,9 +4,17 @@
 {% block title %}Margitex{% endblock %}
 {% block content %}
     {% if orders %}
-    <h1>Lista de pedidos</h1>
+        <form class="form-inline"  action="." method="get">
+            <div class="form-group mb-2">
+                {{ form.as_table }}
+                <input type="submit" class="btn btn-outline-primary" value="Buscar" >
+                <a href=" {% url 'mystore:index' %}" class="btn btn-outline-primary"> mostrar todos</a>
+            </div>
+        </form>
+
         <a class="btn btn-primary btn-lg btn-block" href="{% url 'mystore:add_order' %}"> agregar pedido</a>
-        <ul>
+        <h2>Lista de pedidos</h2>
+            <ul>
         {% for order in orders %}
             <div class="card">
                 <h5 class="card-header">Pedido: {{ order.id }}</h5>
@@ -24,6 +32,6 @@
 <a class="btn btn-primary btn-lg btn-block" href="{% url 'mystore:add_order' %}"> agregar pedido</a>
     {% endif %}
         <div id="pagination">
-            {% include "pagination.html" with page=page_obj %}
+            {% include "pagination.html" with page=orders %}
         </div>
 {% endblock %}
