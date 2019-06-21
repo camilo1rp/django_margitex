@@ -1,0 +1,18 @@
+{% extends "mystore/base.html" %}
+{% load mystore_tags %}
+{% block title %}Confirmar Pedido{% endblock %}
+{% block content %}
+<h1>Pagos y descuentos</h1>
+<form action= "." method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="aplicar"></p>
+</form>
+<a>Total: $ {{order.total}}</a><br>
+<a>pagado: $ {{order.paid}}</a><br>
+<a>descuento: $ {{order.discount}}</a>
+<p>Total a pagar: $ {{order.debt}}</p>
+
+    <a href="{% url 'mystore:order_share' order.id %}">enviar email</a>
+
+{% endblock %}

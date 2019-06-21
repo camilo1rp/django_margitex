@@ -1,0 +1,25 @@
+{% extends "mystore/base.html" %}
+{% block title %}Buscar Cliente{% endblock %}
+{% block content %}
+{% if query %}
+<h1>Resultado que contienen: "{{ query }}"</h1>
+<h3>
+    {% with results.count as total_results %}
+    Encontrado: {{ total_results }} resultado{{ total_results|pluralize }}
+    {% endwith %}
+</h3>
+{% for client in results %}
+<h4><a href="{% url 'mystore:client_search' %}">Cliente:{{ client.name }}</a></h4>
+{% empty %}
+<p>Tu busqueda no produjo ningun resultado</p>
+{% endfor %}
+<p><a href="{% url 'mystore:client_search' %}">Buscar otra vez</a></p>
+{% else %}
+<h1>Buscar Cliente</h1>
+<p>Buscar por nombre o email:</p>
+<form action="." method="get">
+{{ form.as_p }}
+<input type="submit" value="Buscar">
+</form>
+{% endif %}
+{% endblock %}

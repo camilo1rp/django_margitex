@@ -1,0 +1,25 @@
+{% extends "mystore/base.html" %}
+{% block title %}Buscar Pedido{% endblock %}
+{% block content %}
+{% if query %}
+<h1>Pedidos que contienen "{{ query }}"</h1>
+<h3>
+    {% with results.count as total_results %}
+    Encontrado: {{ total_results }} resultado{{ total_results|pluralize }}
+    {% endwith %}
+</h3>
+{% for order in results %}
+<h4><a href="{% url 'mystore:order_update' order.id %}">Pedido: {{ order.id }}</a></h4>
+{% empty %}
+<p>Tu busqueda no produjo ningun resultado</p>
+{% endfor %}
+<p><a href="{% url 'mystore:order_search' %}">Buscar otra vez</a></p>
+{% else %}
+<h1>Buscar Pedido</h1>
+<p>Digite el numero del pedido:</p>
+<form action="." method="get">
+{{ form.as_p }}
+<input type="submit" value="Buscar">
+</form>
+{% endif %}
+{% endblock %}

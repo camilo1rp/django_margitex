@@ -1,0 +1,48 @@
+{% extends "mystore/base.html" %}
+{% load mystore_tags %}
+{% block title %}Confirmar Pedido{% endblock %}
+{% block content %}
+<h1>Pagos y Abonos</h1>
+<h3>Cliente: {{order.client}}</h3>
+<h4>Fecha de entrega: {{order.due_date|date:"d - m - Y"}}</h4>
+<p>{{ error_message}}</p>
+<form action= "." method="post">
+    <label for="amount">Abono</label>
+    <input type="number" name="amount" id="amount" min="50">
+    {% csrf_token %}
+    <p><input type="submit" value="aplicar"></p>
+</form>
+<table class="table table-striped">
+    <tr>
+        <th scope="col">Producto</th>
+        <th scope="col">Precio(u)</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Total</th>
+        <th scope="col" colspan="2">Estado</th>
+    </tr>
+    {%for item_order in order.qty_set.all%}
+    <tr>
+        <td>{{item_order.item.type}} {{item_order.item.name}} T:{{item_order.item.size}} </td>
+        <td>{{item_order.item.price}}</td>
+        <td>{{ item_order.quantity }}</td>
+        <td>{{item_order.add_same_items}}</td>
+        <td>
+            {{ item_order.pending }}
+            <a href="{% url 'mystore:order_return' order.id item_order.id item_order.pending %}">RETORNO</a>
+        </td>
+        <td>
+            {{ item_order.get_dispatched_items }}
+            <a href="{% url 'mystore:order_dispatch' order.id item_order.id item_order.pending%}">ENTREGADO</a>
+        </td>
+    </tr>
+    {% endfor%}
+</table>
+
+<a>Total: $ {{order.total}}</a><br>
+<a>pagado: $ {{order.paid}}</a><br>
+<a>descuento: $ {{order.discount}}</a>
+<p>Total a pagar: $ {{order.debt}}</p>
+<section id="confirmation">
+    <a href="{% url 'mystore:receipt' %}">imprimir recibo</a>
+</section>
+{% endblock %}

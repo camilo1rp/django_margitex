@@ -1,0 +1,17 @@
+{% extends "mystore/base.html" %}
+{% load static %}
+
+{% block title %}Share a post{% endblock %}
+{% block content %}
+{% if sent %}
+    <h1>E-mail successfully sent</h1>
+    <p>"La confirmacion  del pedido fue enviada a {{ form.cleaned_data.to}}.</p>
+{% else %}
+    <h1>Eviar confirmacion del pedido: N0"{{ order.id }}"</h1>
+    <form action="." method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <input type="submit" value="Enviar e-mail">
+    </form>
+{% endif %}
+{% endblock %}l>

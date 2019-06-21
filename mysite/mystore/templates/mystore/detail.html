@@ -4,40 +4,50 @@
 <!DOCTYPE html>
 {% block title %}{{ order.order }}{% endblock %}
 {% block content %}
-<h2>Pedido: 0{{ order.id }}</h2>
+<h1>Pedido: {{ order.id }}</h1>
 <h3>Cliente: {{ order.client}}</h3>
-<h3>Fecha: {{ order.created}}</h3>
+<h3>Fecha: {{ order.created|date:"d - m - Y"}}</h3>
 <br>
-<table>
+<table class="table table-striped">
     <tr>
-        <th>Producto</th>
-        <th>Precio(unidad)</th>
-        <th>Cantidad</th>
-        <th>Total</th>
-        <th>Pendiente</th>
-        <th>Remover</th>
-        <th></th>
+        <th scope="col">Producto</th>
+        <th scope="col">Precio(u)</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Total</th>
+        <th scope="col">Remover</th>
+        <th scope="col" colspan="2">Estado</th>
     </tr>
     {%for item_order in order.qty_set.all%}
     <tr>
-        <td>{{item_order.item.type}} {{item_order.item.name}} T:{{item_order.item.size}} </td>
-        <td>{{item_order.item.price}}</td>
+        <td>{{item_order.item.institution}} {{item_order.item.type}} {{item_order.item.name}} T:{{item_order.item.size}} </td>
+        <td>${{item_order.item.price}}</td>
         <td>{{ item_order.quantity }}</td>
-        <td>{{item_order.add_same_items}}</td>
-        <td>{{ item_order.pending }} </td>
-        <td><a href="{% url 'mystore:item_removed' order.id item_order.id %}">Quitar</a></td>
-        <td><a href="{% url 'mystore:item_dispatch' order.id item_order.id item_order.pending %}">entregado</a></td>
+        <td>${{item_order.add_same_items}}</td>
+        <td><a href="{% url 'mystore:item_removed' order.id institution size item_order.id %}">Quitar</a></td>
+        <td>
+            {{ item_order.pending }}
+            <a href="{% url 'mystore:items_pending' order.id institution size item_order.id item_order.pending %}"> PENDIENTE</a>
+        </td>
+        <td>
+            {{ item_order.get_dispatched_items }}
+            <a href="{% url 'mystore:item_dispatch' order.id institution size item_order.id item_order.pending %}"> ENTREGADO</a>
+        </td>
     </tr>
     {% endfor%}
 </table>
-<p>Total = {{ order.add_all_items}}</p>
+<p>Total = ${{ order.add_all_items}}</p>
 <div>
     <h2>Agregar producto a la orden</h2>
     {% if institution %}
-        <p>Flltro: {{ institution }}</p>
+        <h4>Flltro: {{ institution }}, Talla: {{ size }}</h4>
         <a href="{% url 'mystore:detail' order.id %}">limpiar filtro</a>
+        <form action="{% url 'mystore:size' order.id institution size %}" method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Agregar producto"></p>
+        </form>
     {% else %}
-        <form action="{% url 'mystore:detail' order.id %}" method="post">
+        <form action="{% url 'mystore:size' order.id institution size %}" method="post">
             {% csrf_token %}
             <label for="inst">Colegio</label>
             <select id="inst" name="inst">
@@ -51,10 +61,9 @@
         </form>
     {% endif %}
 </div>
-<form action="." method="post">
-    {{ form.as_p }}
-    {% csrf_token %}
-    <p><input type="submit" value="Add items"></p>
-</form>
-<a href="{% url 'mystore:index' %}"> volver a inicio</a>
+
+<section id="confirmation">
+    <a href="{% url 'mystore:confirmation' order.id %}" >Siguiente</a>
+</section>
+<a href="{% url 'mystore:index' %}" > volver a inicio</a>
 {% endblock %}

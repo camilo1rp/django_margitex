@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mystore.apps.MystoreConfig',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -75,12 +76,15 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'mystoredb',
+            'USER': 'margitex',
+            'PASSWORD': 'database1',
+            'HOST': 'localhost',
+            'PORT': ''
+            }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -100,7 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+DATE_INPUT_FORMATS = ['%d-%m-%Y']
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -119,3 +123,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'camilo1rp@gmail.com'
+EMAIL_HOST_PASSWORD = 'Deltaz1234!@#$'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

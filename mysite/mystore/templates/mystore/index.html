@@ -3,15 +3,27 @@
 
 {% block title %}Margitex{% endblock %}
 {% block content %}
-    {% if latest_order_list %}
-        <h1>Lista de pedidos</h1>
+    {% if orders %}
+    <h1>Lista de pedidos</h1>
+        <a class="btn btn-primary btn-lg btn-block" href="{% url 'mystore:add_order' %}"> agregar pedido</a>
         <ul>
-        {% for order in latest_order_list %}
-            <li><a href="{% url 'mystore:detail' order.id  %}">{{ order.order }}</a></li>
+        {% for order in orders %}
+            <div class="card">
+                <h5 class="card-header">Pedido: {{ order.id }}</h5>
+                <div class="card-body">
+                <li><a .card-link href="{% url 'mystore:detail' order.id  %}">{{ order.id }}</a></li>
+                <p>{{ order.client}} - Entrega: {{ order.due_date|date:"d - m - Y"}} </p>
+                <span class="badge badge-pill badge-primary">{{order.order}}</span>
+                <a .card-link href="{% url 'mystore:order_update' order.id %}"> actualizar</a>
+                </div>
+            </div>
         {% endfor %}
         </ul>
     {% else %}
         <p>Ningun pedido ha sido agregado</p>
+<a class="btn btn-primary btn-lg btn-block" href="{% url 'mystore:add_order' %}"> agregar pedido</a>
     {% endif %}
-    <a href="{% url 'mystore:add_order' %}"> agregar pedido</a>
+        <div id="pagination">
+            {% include "pagination.html" with page=page_obj %}
+        </div>
 {% endblock %}
