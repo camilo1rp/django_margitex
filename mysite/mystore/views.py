@@ -287,4 +287,9 @@ def client_search(request):
                                                         'query': query,
                                                         'results': results
                                                         })
+class InventoryListView(ListView):
+    queryset = Item.objects.all().order_by('quantity')
+    context_object_name = 'products'
+    paginate_by = 5
+    template_name ="mystore/inventory.html"
 

@@ -6,6 +6,7 @@ app_name = 'mystore'
 urlpatterns = [
     path('', views.IndexView, name='index'),
     path('<int:order_id>/', views.detail, name='detail'),
+    path('inventory/', views.InventoryListView.as_view(), name='inventory'),
     path('add_order/', views.add_order, name='add_order'),
     path('<int:order_id>/<slug:institution>/<slug:size>/<int:item_rmv>/', views.detail, name='item_removed'),
     path('<int:order_id>/<slug:institution>/<slug:size>/<int:item_dispatch>/<int:item_pending>', views.detail, name='item_dispatch'),

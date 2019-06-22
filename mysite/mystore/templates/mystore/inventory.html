@@ -1,0 +1,28 @@
+{% extends "mystore/base.html" %}
+{% load static %}
+
+{% block title %}Productos{% endblock %}
+{% block content %}
+    {% if products %}
+
+        <h2>Lista de productos</h2>
+            <ul>
+        {% for item in products %}
+            <div class="card">
+                <h5 class="card-header">{{ item.institution.name }} - {{ item.name }}
+                    {{ item.size}}
+                </h5>
+                <div class="card-title">
+                    <h3>Cantidad: {{ item.quantity }}</h3>
+                 <span class="badge badge-pill badge-primary">{{ item.quantity }}</span>
+                </div>
+            </div>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Ningun producto ha sido agregado</p>
+     {% endif %}
+        <div id="pagination">
+            {% include "pagination.html" with page=page_obj %}
+        </div>
+{% endblock %}
