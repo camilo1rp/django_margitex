@@ -107,7 +107,6 @@ def detail(request, order_id, item_rmv=None, institution=None,
                 institution = Institution.objects.get(pk=request.POST['inst'])
                 size = request.POST['size']
             except (KeyError, Institution.DoesNotExist):
-                # Redisplay the question voting form.
                 form = SelForm()
                 form.fields["item"].queryset = Item.objects.all()
             else:
@@ -153,30 +152,34 @@ def add_order(request):
         order_form = OrderForm()
     return render(request, 'mystore/add_order.html', {'order_form': order_form})
 
-def confirmation(request, order_id, confirm=0):
+def confirmation(request, order_id, confirm=None):
     order = get_object_or_404(Order, pk=order_id)
-    if request.method == 'POST':
-        form = ConfirmForm(request.POST or None, instance=order)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('mystore:confirmation', args=(order.id,)))
-    else:
-        if confirm > 0:
-            order_items = order.qty_set.all()
-            for item in order_items:
-                dispatched = item.quantity - item.pending
-                if dispatched > 0:
-                    item_stock = Item.objects.get(code=item.item)
-                    item_stock.quantity -= dispatched
-                    item_stock.save()
-            return HttpResponseRedirect(reverse('mystore:confirmation',
-                                                 args=(order.id, 0)))
 
-        order.debt()
-        order.save()
-        form = ConfirmForm({'due_date':datetime.now()+timedelta(days=15)})
+    if confirm != None and order.confirmed == False:
+        order_items = order.qty_set.all()
+        for item in order_items:
+            dispatched = item.quantity - item.pending
+            if dispatched > 0:
+                item_stock = Item.objects.get(code=item.item)
+                item_stock.quantity -= dispatched
+                item_stock.quantity_ordered += item.pending
+                item_stock.save()
+                order.confirmed = True
+        return HttpResponseRedirect(reverse('mystore:confirmation_1',
+                                            args=(order.id,)))
+    else:
+        if request.method == 'POST':
+            form = ConfirmForm(request.POST or None, instance=order)
+            if form.is_valid():
+                form.save()
+                order.save()
+            return HttpResponseRedirect(reverse('mystore:confirmation_1', args=(order.id,)))
+
+    order.debt()
+    order.save()
+    form = ConfirmForm()
     return render(request, 'mystore/confirmation.html', {'form': form,
-                                                     'order': order})
+                                                         'order': order})
 
 def receipt(request):
     return render(request, 'mystore/receipt.html')
@@ -193,6 +196,7 @@ def order_update(request, order_id, item_dispatch=None,
             item_dispatched.save()
             product = Item.objects.get(code=item_dispatched.item)
             product.quantity -= 1
+            product.quantity_ordered += 1
             product.save()
         return HttpResponseRedirect(reverse('mystore:order_update', args=(order.id,)))
 
@@ -202,7 +206,8 @@ def order_update(request, order_id, item_dispatch=None,
             item_dispatched.pending += 1
             item_dispatched.save()
             product = Item.objects.get(code=item_dispatched.item)
-            product.quantity +=1
+            product.quantity += 1
+            product.quantity_ordered += 1
             product.save()
 
         return HttpResponseRedirect(reverse('mystore:order_update', args=(order.id,)))

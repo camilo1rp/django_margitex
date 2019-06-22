@@ -61,9 +61,13 @@
         </form>
     {% endif %}
 </div>
-
+{% if order.confirmed  == False %}
 <section id="confirmation">
-    <a href="{% url 'mystore:confirmation' order.id 1 %}" >Siguiente</a>
+    <form action="{% url 'mystore:confirmation' order.id order.id %}">
+        {% csrf_token %}
+        <p><input type="submit" value="Siguiente"></p>
+    </form>
 </section>
+{% endif %}
 <a href="{% url 'mystore:index' %}" > volver a inicio</a>
 {% endblock %}

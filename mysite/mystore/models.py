@@ -14,6 +14,8 @@ class Client(models.Model):
         return self.name
 
 class Order(models.Model):
+    CONFIRM_CHOICES = ((False, 'Borrador'), (True, 'Confirmado'),
+    )
     order = models.CharField(max_length=25, verbose_name='descripcion', blank=True)
     created = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(Client, null=True, on_delete=models.SET_NULL, verbose_name='cliente')
@@ -29,6 +31,8 @@ class Order(models.Model):
                                default=0, verbose_name='saldo')
     due_date = models.DateField(default= datetime.now()+timedelta(days=15),
                                 verbose_name= 'Fecha de entrega')
+    confirmed = models.BooleanField(choices=CONFIRM_CHOICES, default=False)
+
     def add_items(self):
         return self.items.aggregate(total=models.Sum('price'))['total']
 
@@ -67,8 +71,7 @@ class Item(models.Model):
     code = models.SlugField(max_length=25, verbose_name='codigo')
     prod_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0,
                                 verbose_name='precio produccion')
-    #class Meta:
-        #ordering = ('-code',)
+    quantity_ordered = models.IntegerField(default=0, verbose_name='cantidad ordenada')
     def __str__(self):
         return self.code
 
