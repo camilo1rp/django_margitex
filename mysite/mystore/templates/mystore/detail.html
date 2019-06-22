@@ -63,7 +63,7 @@
 </div>
 
 <section id="confirmation">
-    <a href="{% url 'mystore:confirmation' order.id %}" >Siguiente</a>
+    <a href="{% url 'mystore:confirmation' order.id 1 %}" >Siguiente</a>
 </section>
 <a href="{% url 'mystore:index' %}" > volver a inicio</a>
 {% endblock %}

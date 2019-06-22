@@ -67,8 +67,8 @@ class Item(models.Model):
     code = models.SlugField(max_length=25, verbose_name='codigo')
     prod_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0,
                                 verbose_name='precio produccion')
-    class Meta:
-        ordering = ('-created',)
+    #class Meta:
+        #ordering = ('-code',)
     def __str__(self):
         return self.code
 

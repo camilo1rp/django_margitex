@@ -153,7 +153,7 @@ def add_order(request):
         order_form = OrderForm()
     return render(request, 'mystore/add_order.html', {'order_form': order_form})
 
-def confirmation(request, order_id):
+def confirmation(request, order_id, confirm=0):
     order = get_object_or_404(Order, pk=order_id)
     if request.method == 'POST':
         form = ConfirmForm(request.POST or None, instance=order)
@@ -161,13 +161,16 @@ def confirmation(request, order_id):
             form.save()
             return HttpResponseRedirect(reverse('mystore:confirmation', args=(order.id,)))
     else:
-        order_items = order.qty_set.all()
-        for item in order_items:
-            dispatched = item.quantity - item.pending
-            if dispatched > 0:
-                item_stock = Item.objects.get(code=item.item)
-                item_stock.quantity -= dispatched
-                item_stock.save()
+        if confirm > 0:
+            order_items = order.qty_set.all()
+            for item in order_items:
+                dispatched = item.quantity - item.pending
+                if dispatched > 0:
+                    item_stock = Item.objects.get(code=item.item)
+                    item_stock.quantity -= dispatched
+                    item_stock.save()
+            return HttpResponseRedirect(reverse('mystore:confirmation',
+                                                 args=(order.id, 0)))
 
         order.debt()
         order.save()
@@ -188,6 +191,9 @@ def order_update(request, order_id, item_dispatch=None,
         if item_pending !=0:
             item_dispatched.pending -= 1
             item_dispatched.save()
+            product = Item.objects.get(code=item_dispatched.item)
+            product.quantity -= 1
+            product.save()
         return HttpResponseRedirect(reverse('mystore:order_update', args=(order.id,)))
 
     if item_missing != None:
@@ -195,6 +201,10 @@ def order_update(request, order_id, item_dispatch=None,
         if item_pending < item_dispatched.quantity:
             item_dispatched.pending += 1
             item_dispatched.save()
+            product = Item.objects.get(code=item_dispatched.item)
+            product.quantity +=1
+            product.save()
+
         return HttpResponseRedirect(reverse('mystore:order_update', args=(order.id,)))
 
     if request.method == 'POST':
@@ -209,14 +219,6 @@ def order_update(request, order_id, item_dispatch=None,
             return render(request, 'mystore/order_update.html',
                         {'order': order,
                         'error_message': "Abono supera el costo total"})
-    else:
-        order_items=order.qty_set.all()
-        for item in order_items:
-            dispatched = item.quantity - item.pending
-            if dispatched > 0:
-                item_stock = Item.objects.get(code=item.item)
-                item_stock.quantity -= dispatched
-                item_stock.save()
 
     order.debt()
     order.save()
