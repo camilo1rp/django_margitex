@@ -37,6 +37,7 @@
 </table>
 <p>Total = ${{ order.add_all_items}}</p>
 <div>
+{% if order.confirmed  == False %}
     <h2>Agregar producto a la orden</h2>
     {% if institution %}
         <h4>Flltro: {{ institution }}, Talla: {{ size }}</h4>
@@ -61,13 +62,12 @@
         </form>
     {% endif %}
 </div>
-{% if order.confirmed  == False %}
+
 <section id="confirmation">
-    <form action="{% url 'mystore:confirmation' order.id order.id %}">
-        {% csrf_token %}
-        <p><input type="submit" value="Siguiente"></p>
-    </form>
+    <a href="{% url 'mystore:confirmation' order.id %}">Confirmar</a>
 </section>
+{% else %}
+<p>Pedido no se puede modificar porque ya ha sido confirmado. </p>
 {% endif %}
 <a href="{% url 'mystore:index' %}" > volver a inicio</a>
 {% endblock %}

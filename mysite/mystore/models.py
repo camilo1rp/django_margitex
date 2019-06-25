@@ -72,6 +72,14 @@ class Item(models.Model):
     prod_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0,
                                 verbose_name='precio produccion')
     quantity_ordered = models.IntegerField(default=0, verbose_name='cantidad ordenada')
+    quantity_needed = models.IntegerField(default=0, verbose_name='cantidad necesitada')
+    def item_needed(self):
+        sum = self.quantity_ordered - self.quantity
+        if sum < 0:
+            sum = 0
+        self.quantity_needed = sum
+        return sum
+
     def __str__(self):
         return self.code
 

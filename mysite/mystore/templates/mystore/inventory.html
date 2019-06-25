@@ -13,8 +13,10 @@
                     {{ item.size}}
                 </h5>
                 <div class="card-title">
-                    <h3>Cantidad: {{ item.quantity }}</h3>
-                 <span class="badge badge-pill badge-primary">{{ item.quantity }}</span>
+                    <h4>Cantidad en inventorio: {{ item.quantity }}</h4>
+                    <h4>Cantidad apartada: {{item.quantity_ordered }}</h4>
+                    <h3>Cantidad necesitada: {{ item.quantity_needed }}</h3>
+                 <span class="badge badge-pill badge-primary">{{ item. }}</span>
                 </div>
             </div>
         {% endfor %}

@@ -1,22 +1,3 @@
-
-
-#sidebar {
-    float:right;
-    width:30%;
-    padding:10px;
-    background:#efefef;
-    height:100%;
-}
-#confirmation {
-    float:right;
-    width:20%;
-    padding:10px;
-    background:#efefec;
-    height:100%;
-
-
-}
-
 #invoice-POS{
   box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
   padding:2mm;
@@ -49,7 +30,7 @@ p{
 
 #top{min-height: 100px;}
 #mid{min-height: 80px;}
-#bot{ min-height: 50px;}
+#bot{min-height: 50px;}
 
 #top .logo{
   //float: left;
@@ -75,22 +56,23 @@ p{
   float: right;
 }
 .title p{text-align: right;}
+
 table{
-  width: 100%;
+  width:100%;
   border-collapse: collapse;
 }
-td{
-  //padding: 5px 0 5px 15px;
-  //border: 1px solid #EEE
+td {
+  padding: 2px 0.5px 15px;
+  border: 1px solid #EEE
 }
 .tabletitle{
-  //padding: 5px;
-  font-size: .5em;
+  padding: 2px;
+  font-size: .2em;
   background: #EEE;
 }
 .service{border-bottom: 1px solid #EEE;}
-.item{width: 24mm;}
-.itemtext{font-size: .5em;}
+.item{width: 4mm;}
+.itemtext{font-size: .2em;}
 
 #legalcopy{
   margin-top: 5mm;
