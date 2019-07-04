@@ -29,7 +29,8 @@ def IndexView(request):
             results = Order.objects.annotate(search=search_vector, rank=SearchRank(search_vector, search_query))\
                 .filter(search=search_query).order_by('-rank')
     else:
-        results = Order.objects.filter(debt__gt=F('total')).order_by('created')
+        #results = Order.objects.filter(debt__gt=F('total')).order_by('created')
+        results = Order.objects.all().order_by('created')
     #context_object_name = 'orders'
     object_list = results
     paginator = Paginator(object_list, 10)  # 3 orders in each page
