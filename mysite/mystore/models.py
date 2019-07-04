@@ -11,11 +11,10 @@ class Client(models.Model):
     phone =  models.DecimalField(max_digits=10, decimal_places=0, verbose_name='Telefono', unique=True)
     email = models.EmailField(blank=True)
     def __str__(self):
-        return self.name
+        return self.name + " - " + str(self.phone)[-3::]
 
 class Order(models.Model):
-    CONFIRM_CHOICES = ((False, 'Borrador'), (True, 'Confirmado'),
-    )
+    CONFIRM_CHOICES = ((False, 'Borrador'), (True, 'Confirmado'),)
     order = models.CharField(max_length=25, verbose_name='descripcion', blank=True)
     created = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(Client, null=True, on_delete=models.SET_NULL, verbose_name='cliente')
@@ -27,8 +26,7 @@ class Order(models.Model):
                                default=0, verbose_name='abono', validators=[MinValueValidator(0.00)])
     discount = models.DecimalField(max_digits=9, decimal_places=2,
                                default=0, verbose_name='descuento')
-    debt = models.DecimalField(max_digits=9, decimal_places=2,
-                               default=0, verbose_name='saldo')
+    debt = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='saldo')
     due_date = models.DateField(default= datetime.now()+timedelta(days=15),
                                 verbose_name= 'Fecha de entrega')
     confirmed = models.BooleanField(choices=CONFIRM_CHOICES, default=False)
@@ -42,7 +40,8 @@ class Order(models.Model):
             cnt += qty.add_same_items()
             self.total = cnt
         return cnt
-    def debt(self):
+
+    def debts(self):
         self.debt = self.total - self.paid - self.discount
 
     def __str__(self):
@@ -54,8 +53,6 @@ class Institution(models.Model):
                                  max_length=50, verbose_name='codigo')
     def __str__(self):
         return self.name_slug
-
-
 
 class Item(models.Model):
     name = models.CharField(max_length=25, verbose_name='nombre')

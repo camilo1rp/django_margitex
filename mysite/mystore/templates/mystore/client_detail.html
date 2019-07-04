@@ -1,0 +1,27 @@
+{% extends "mystore/base.html" %}
+{% load static %}
+
+{% block title %}Client{% endblock %}
+{% block content %}
+    {% if client %}
+        <h2>Lista de pedidos de {{ client.name }}</h2>
+        <ul>
+        {% for order in client.order_set.all %}
+            <div class="card">
+                <h5 class="card-header">Pedido: {{ order.id }}</h5>
+                <div class="card-body">
+                    <p>{{ order.client}} - Entrega: {{ order.due_date|date:"d - m - Y"}} </p>
+                    <span class="badge badge-pill badge-primary">{{order.order}}</span>
+                    <a .card-link href="{% url 'mystore:order_update' order.id %}"> actualizar</a>
+                </div>
+            </div>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Ningun pedido encontrado</p>
+        <a class="btn btn-primary btn-lg btn-block" href="{% url 'mystore:add_order' %}"> agregar pedido</a>
+    {% endif %}
+        <div id="pagination">
+            {% include "pagination.html" with page=orders %}
+        </div>
+{% endblock %}

@@ -5,7 +5,7 @@ from django.views.generic import ListView
 from django.utils import timezone
 from .forms import OrderForm, SelForm, ConfirmForm, EmailPostForm, \
     SearchForm, ClientSearchForm
-
+from django.db.models import Q
 from .models import Order, Item, Institution, Client
 from django.core.mail import send_mail
 from datetime import datetime, timedelta
@@ -15,6 +15,7 @@ from django.db.models.functions import Greatest
 from django.views.generic.detail import SingleObjectMixin
 from django.core.paginator import Paginator, EmptyPage,\
 PageNotAnInteger
+from django.db.models import F
 
 def IndexView(request):
     form = SearchForm()
@@ -28,10 +29,10 @@ def IndexView(request):
             results = Order.objects.annotate(search=search_vector, rank=SearchRank(search_vector, search_query))\
                 .filter(search=search_query).order_by('-rank')
     else:
-        results = Order.objects.all().order_by('created')
+        results = Order.objects.filter(debt__gt=F('total')).order_by('created')
     #context_object_name = 'orders'
     object_list = results
-    paginator = Paginator(object_list, 3)  # 3 orders in each page
+    paginator = Paginator(object_list, 10)  # 3 orders in each page
     page = request.GET.get('page')
     try:
         orders = paginator.page(page)
@@ -51,7 +52,7 @@ def detail(request, order_id, item_rmv=None, institution=None,
            size=None, item_dispatch=None, item_pending=None, item_missing=None):
     order = get_object_or_404(Order, pk=order_id)
     order.add_all_items()
-    order_items_qty = order.qty_set.all()
+    order_items_qty = order.qty_set.all().order_by('id')
     order.save()
     #check if any filter and assign the response
     response_page = HttpResponseRedirect(reverse('mystore:size', args=(order.id,
@@ -136,6 +137,7 @@ def detail(request, order_id, item_rmv=None, institution=None,
                     filter(institution=institution, size=size)
     return render(request, 'mystore/detail.html', {'form': form,
                                                    'order': order,
+                                                   'order_items_qty': order_items_qty,
                                                    'institution': institution, 'size': size},)
 
 
@@ -174,18 +176,24 @@ def confirmation(request, order_id):
             form = ConfirmForm(request.POST or None, instance=order)
             if form.is_valid():
                 form.save()
+                order.debts()
                 order.save()
             return HttpResponseRedirect(reverse('mystore:confirmation',
                                                 args=(order.id,)))
 
-    order.debt()
+    order.debts()
     order.save()
     form = ConfirmForm()
     return render(request, 'mystore/confirmation.html', {'form': form,
                                                          'order': order})
 
-def receipt(request):
-    return render(request, 'mystore/receipt.html')
+def receipt(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    tax = float(order.total) * 0.19
+    order.debts()
+    order.save()
+    return render(request, 'mystore/receipt.html', {'order': order,
+                                                    'tax': tax})
 
 def order_update(request, order_id, item_dispatch=None,
                  item_missing=None, item_pending=0,):
@@ -220,7 +228,7 @@ def order_update(request, order_id, item_dispatch=None,
     if request.method == 'POST':
         amount = request.POST['amount']
         amount_int = int(amount)
-        order.debt()
+        order.debts()
         if order.debt >= amount_int:
             order.paid += amount_int
             order.save()
@@ -230,7 +238,7 @@ def order_update(request, order_id, item_dispatch=None,
                         {'order': order,
                         'error_message': "Abono supera el costo total"})
 
-    order.debt()
+    order.debts()
     order.save()
     return render(request, 'mystore/order_update.html', {'order': order})
 
@@ -302,6 +310,24 @@ def client_search(request):
 class InventoryListView(ListView):
     queryset = Item.objects.all().order_by('-quantity_needed')
     context_object_name = 'products'
-    paginate_by = 5
+    paginate_by = 10
     template_name ="mystore/inventory.html"
 
+
+def client_detail(request, client):
+    client_obj = get_object_or_404(Client, pk=client)
+    #context_object_name = 'client'
+    results = client_obj.order_set.all()
+    object_list = results
+    paginator = Paginator(object_list, 10)  # 3 client in each page
+    page = request.GET.get('page')
+    try:
+        client = paginator.page(page)
+    except PageNotAnInteger:
+    # If page is not an integer deliver the first page
+        client = paginator.page(1)
+    except EmptyPage:
+    # If page is out of range deliver last page of results
+        client = paginator.page(paginator.num_pages)
+
+    return render(request, 'mystore/client_detail.html', {'client': client_obj,})

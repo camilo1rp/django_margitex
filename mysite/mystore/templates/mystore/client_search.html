@@ -2,14 +2,14 @@
 {% block title %}Buscar Cliente{% endblock %}
 {% block content %}
 {% if query %}
-<h1>Resultado que contienen: "{{ query }}"</h1>
+<h1>Resultados que contienen: "{{ query }}"</h1>
 <h3>
     {% with results.count as total_results %}
     Encontrado: {{ total_results }} resultado{{ total_results|pluralize }}
     {% endwith %}
 </h3>
 {% for client in results %}
-<h4><a href="{% url 'mystore:client_search' %}">Cliente:{{ client.name }}</a></h4>
+<h4><a href="{% url 'mystore:client_detail' client.id %}">Cliente:{{ client.name }}</a></h4>
 {% empty %}
 <p>Tu busqueda no produjo ningun resultado</p>
 {% endfor %}

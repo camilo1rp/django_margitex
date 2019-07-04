@@ -43,6 +43,6 @@
 <a>descuento: $ {{order.discount}}</a>
 <p>Total a pagar: $ {{order.debt}}</p>
 <section id="confirmation">
-    <a href="{% url 'mystore:receipt' %}">imprimir recibo</a>
+    <a href="{% url 'mystore:receipt' order.id %}">imprimir recibo</a>
 </section>
 {% endblock %}

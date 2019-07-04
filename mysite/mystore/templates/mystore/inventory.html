@@ -9,14 +9,15 @@
             <ul>
         {% for item in products %}
             <div class="card">
-                <h5 class="card-header">{{ item.institution.name }} - {{ item.name }}
-                    {{ item.size}}
+                <h5 class="card-header">{{ item.name|title }}  {{ item.size}} - {{ item.institution.name }}
                 </h5>
                 <div class="card-title">
-                    <h4>Cantidad en inventorio: {{ item.quantity }}</h4>
-                    <h4>Cantidad apartada: {{item.quantity_ordered }}</h4>
-                    <h3>Cantidad necesitada: {{ item.quantity_needed }}</h3>
-                 <span class="badge badge-pill badge-primary">{{ item. }}</span>
+                    <ul class="list-group">
+                        <li class="list-group-item">Cantidad en inventorio: {{ item.quantity }}  -
+                            Cantidad apartada: {{item.quantity_ordered }}</li>
+                        <li class="list-group-item"><h3>Cantidad necesitada: {{ item.quantity_needed }}</h3></li>
+                    </ul>
+                    <span class="badge badge-pill badge-primary">{{ item.code }}</span>
                 </div>
             </div>
         {% endfor %}

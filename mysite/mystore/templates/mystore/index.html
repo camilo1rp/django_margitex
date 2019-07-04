@@ -22,7 +22,7 @@
                 <li><a .card-link href="{% url 'mystore:detail' order.id  %}">{{ order.id }}</a></li>
                 <p>{{ order.client}} - Entrega: {{ order.due_date|date:"d - m - Y"}} </p>
                 <span class="badge badge-pill badge-primary">{{order.order}}</span>
-                <a .card-link href="{% url 'mystore:order_update' order.id %}"> actualizar</a>
+                <a .card-link href="{% url 'mystore:order_update' order.id %}" class="btn btn-outline-primary btn-sm"> actualizar</a>
                 </div>
             </div>
         {% endfor %}

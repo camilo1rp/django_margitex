@@ -14,5 +14,6 @@
 <p>Total a pagar: $ {{order.debt}}</p>
 
     <a href="{% url 'mystore:order_share' order.id %}">enviar email</a>
+    <a href="{% url 'mystore:receipt' order.id %}">ver factura</a>
 
 {% endblock %}

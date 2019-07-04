@@ -14,11 +14,12 @@ urlpatterns = [
     path('<int:order_id>/<slug:institution>/', views.detail, name='institution'),
     path('<int:order_id>/<slug:institution>/<slug:size>/', views.detail, name='size'),
     path('confirmation/<int:order_id>/', views.confirmation, name='confirmation'),
-    path('receipt', views.receipt, name='receipt'),
+    path('receipt/<int:order_id>/', views.receipt, name='receipt'),
     path('order_update/<int:order_id>/', views.order_update, name='order_update'),
     path('order_update/<int:order_id>/<int:item_missing>/<int:item_pending>/return', views.order_update, name='order_return'),
     path('order_update/<int:order_id>/<int:item_dispatch>/<int:item_pending>/remove', views.order_update, name='order_dispatch'),
     path('confirmation/<int:order_id>/share/', views.order_share, name='order_share'),
     path('order_search/', views.order_search, name='order_search'),
     path('client_search/', views.client_search, name='client_search'),
+    path('client_detail/<int:client>', views.client_detail, name='client_detail'),
 ]
