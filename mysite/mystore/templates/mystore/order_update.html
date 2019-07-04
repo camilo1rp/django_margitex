@@ -20,7 +20,7 @@
         <th scope="col">Total</th>
         <th scope="col" colspan="2">Estado</th>
     </tr>
-    {%for item_order in order.qty_set.all%}
+    {%for item_order in order_items_qty%}
     <tr>
         <td>{{item_order.item.type}} {{item_order.item.name}} T:{{item_order.item.size}} </td>
         <td>{{item_order.item.price}}</td>

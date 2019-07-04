@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views.generic import ListView
 from django.utils import timezone
 from .forms import OrderForm, SelForm, ConfirmForm, EmailPostForm, \
-    SearchForm, ClientSearchForm
+    SearchForm, ClientSearchForm, ClientForm
 from django.db.models import Q
 from .models import Order, Item, Institution, Client
 from django.core.mail import send_mail
@@ -198,9 +198,8 @@ def receipt(request, order_id):
 
 def order_update(request, order_id, item_dispatch=None,
                  item_missing=None, item_pending=0,):
-
     order = get_object_or_404(Order, pk=order_id)
-
+    order_items_qty = order.qty_set.all().order_by('id')
     if item_dispatch != None:
         item_dispatched = order.qty_set.get(id=item_dispatch)
         if item_pending !=0:
@@ -241,7 +240,9 @@ def order_update(request, order_id, item_dispatch=None,
 
     order.debts()
     order.save()
-    return render(request, 'mystore/order_update.html', {'order': order})
+    return render(request, 'mystore/order_update.html', {'order': order,
+                                                         'order_items_qty': order_items_qty,
+                                                         })
 
 def order_share(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
@@ -332,3 +333,15 @@ def client_detail(request, client):
         client = paginator.page(paginator.num_pages)
 
     return render(request, 'mystore/client_detail.html', {'client': client_obj,})
+
+def add_client(request):
+    if request.method == 'POST':
+        # An order was added
+        client_form = ClientForm(data=request.POST)
+        if client_form.is_valid():
+            new_client = Client(**client_form.cleaned_data)
+            new_client.save()
+            return HttpResponseRedirect(reverse('mystore:add_order',))
+    else:
+        client_form = ClientForm()
+    return render(request, 'mystore/add_client.html', {'client_form': client_form})

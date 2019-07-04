@@ -1,0 +1,10 @@
+{% extends "mystore/base.html" %}
+{% block title %}Client nuevo{% endblock %}
+{% block content %}
+<h1>Agregar Cliente</h1>
+    <form action="." method="post">
+        {{ client_form.as_p }}
+        {% csrf_token %}
+        <p><input  type="submit" class="btn btn-primary" value="Agregar Cliente"></p>
+    </form>
+{% endblock %}

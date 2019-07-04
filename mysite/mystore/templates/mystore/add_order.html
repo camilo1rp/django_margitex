@@ -1,10 +1,15 @@
 {% extends "mystore/base.html" %}
 {% block title %}Pedido nuevo{% endblock %}
 {% block content %}
-<h1>Agregar Pedido</h1>
-    <form action="." method="post">
-        {{ order_form.as_p }}
-        {% csrf_token %}
-        <p><input type="submit" value="Agregar Pedido"></p>
+    <section class="font-weight-bold bg-light">
+        <h1 >Agregar Pedido</h1>
+    </section>
+    <section class="mb-4">
+        <a href="{% url 'mystore:add_client'%}" class="btn btn-outline-primary btn-sm" >Agregar Cliente nuevo</a>
+    </section>
+        <form action="." method="post">
+            {{ order_form.as_p }}
+            {% csrf_token %}
+        <p><input type="submit" value="Agregar Pedido" class="btn btn-primary"></p>
     </form>
 {% endblock %}

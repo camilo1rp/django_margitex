@@ -7,13 +7,13 @@
         <form class="form-inline"  action="." method="get">
             <div class="form-group mb-2">
                 {{ form.as_table }}
-                <input type="submit" class="btn btn-outline-primary" value="Buscar" >
+                <input type="submit" class="btn btn-outline-primary " value="Buscar" >
                 <a href=" {% url 'mystore:index' %}" class="btn btn-outline-primary"> mostrar todos</a>
             </div>
         </form>
 
-        <a class="btn btn-primary btn-lg btn-block" href="{% url 'mystore:add_order' %}"> agregar pedido</a>
-        <h2>Lista de pedidos</h2>
+        <a class="btn btn-primary btn-lg btn-block font-weight-bold" href="{% url 'mystore:add_order' %}">Agregar Pedido</a>
+    <h2>Lista de pedidos</h2>
             <ul>
         {% for order in orders %}
             <div class="card">

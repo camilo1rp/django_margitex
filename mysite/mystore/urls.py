@@ -22,4 +22,5 @@ urlpatterns = [
     path('order_search/', views.order_search, name='order_search'),
     path('client_search/', views.client_search, name='client_search'),
     path('client_detail/<int:client>', views.client_detail, name='client_detail'),
+    path('add_client/', views.add_client, name='add_client'),
 ]

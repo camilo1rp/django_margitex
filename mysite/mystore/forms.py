@@ -1,5 +1,5 @@
 from django import forms
-from .models import Order, Item, Qty, Institution
+from .models import Order, Item, Qty, Client
 from django.forms.widgets import *
 
 class OrderForm(forms.ModelForm):
@@ -44,3 +44,7 @@ class SearchForm(forms.Form):
 class ClientSearchForm(forms.Form):
     buscador = forms.CharField()
 
+class ClientForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ('name', 'email', 'phone')
