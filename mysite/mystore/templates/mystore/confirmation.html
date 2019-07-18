@@ -6,12 +6,26 @@
 <form action= "." method="post">
     {{ form.as_p }}
     {% csrf_token %}
-    <p><input type="submit" value="aplicar"></p>
+    <p><input type="submit" value="aplicar" class="btn btn-success"></p>
 </form>
-<a>Total: $ {{order.total}}</a><br>
-<a>pagado: $ {{order.paid}}</a><br>
-<a>descuento: $ {{order.discount}}</a>
-<p>Total a pagar: $ {{order.debt}}</p>
+<table class="table">
+    <thead>
+        <tr class="d-flex">
+            <th class="col-2">Costo Total</th>
+            <th class="col-2">Pagado</th>
+            <th class="col-2">Descuento</th>
+            <th class="col-4">Total a Pagar</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="d-flex">
+            <td class="col-2" >${{order.total}}</td>
+            <td class="col-2">${{order.paid}}</td>
+            <td class="col-2">${{order.discount}}</td>
+            <td class="col-4 table-success"><em>${{order.debt}}</em></td>
+        </tr>
+    </tbody>
+</table>
 
     <a href="{% url 'mystore:order_share' order.id %}" class="btn btn-primary">enviar email</a>
     <a href="{% url 'mystore:receipt' order.id %}" class="btn btn-primary">ver factura</a>

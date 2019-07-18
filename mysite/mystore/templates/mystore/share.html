@@ -6,7 +6,7 @@
 {% if sent %}
     <h1>E-mail enviado exitosamente!</h1>
     <p>La confirmacion del pedido fue enviada a {{ form.cleaned_data.to}}.</p>
-    <a href="{% url 'mystore:order_share' order.id %}" class="btn btn-primary">enviar email</a>
+    <a href="{% url 'mystore:receipt' order.id %}" class="btn btn-primary">ver factura</a>
 {% else %}
     <h1>Enviar confirmacion del pedido: "{{ order.id }}"</h1>
     <form action="." method="post">

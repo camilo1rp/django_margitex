@@ -8,6 +8,7 @@ urlpatterns = [
     path('<int:order_id>/', views.detail, name='detail'),
     path('inventory/', views.InventoryListView.as_view(), name='inventory'),
     path('add_order/', views.add_order, name='add_order'),
+    path('add_item/', views.add_item, name='add_item'),
     path('<int:order_id>/<slug:institution>/<slug:size>/<int:item_rmv>/', views.detail, name='item_removed'),
     path('<int:order_id>/<slug:institution>/<slug:size>/<int:item_dispatch>/<int:item_pending>', views.detail, name='item_dispatch'),
     path('<int:order_id>/<slug:institution>/<slug:size>/<int:item_missing>/<int:item_pending>/add', views.detail, name='items_pending'),

@@ -15,3 +15,8 @@ def all_institutions():
 def all_sizes():
     sizes = Item.objects.order_by('size').values_list('size', flat=True).distinct()
     return {'sizes': sizes}
+
+@register.inclusion_tag('mystore/product_list.html')
+def all_products():
+    products = Item.objects.order_by('name').values_list('name', flat=True).distinct()
+    return {'products': products}

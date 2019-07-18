@@ -1,0 +1,28 @@
+{% extends "mystore/base.html" %}
+{% load mystore_tags %}
+{% block title %}Agregar Producto{% endblock %}
+{% block content %}
+
+<h1>Agregar Producto a Inventorio</h1>
+{{error_message}}
+<div>
+    <form action="." method="post">
+        {% csrf_token %}
+        <label for="name">Producto: </label>
+        <select id="name" name="name">
+            {% all_products %}
+        </select>
+        <label for="inst">Colegio: </label>
+        <select id="inst" name="inst">
+            {% all_institutions %}
+        </select>
+        <label for="size">Talla: </label>
+        <select id="size" name="size">
+                {% all_sizes %}
+        </select>
+        <label for="size">Cantidad: </label>
+        <input type="number" name="quantity">
+    <input type="submit" class="btn btn-outline-primary" value="agregar">
+    </form>
+</div>
+{% endblock %}

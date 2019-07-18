@@ -310,7 +310,7 @@ def client_search(request):
                                                         'results': results
                                                         })
 class InventoryListView(ListView):
-    queryset = Item.objects.all().order_by('-quantity_needed')
+    queryset = Item.objects.all().order_by('quantity', '-quantity_needed')
     context_object_name = 'products'
     paginate_by = 10
     template_name ="mystore/inventory.html"
@@ -360,3 +360,30 @@ def order_pdf(request, order_id):
     weasyprint.HTML(string=html).write_pdf(response, stylesheets=[weasyprint.CSS(
         settings.STATIC_ROOT + 'mystore/style.css')])
     return response
+
+def add_item(request,):
+    if request.method == 'POST':
+        try:
+
+            institution = Institution.objects.get(pk=request.POST['inst'])
+            code = request.POST['name'] + "-" + \
+            request.POST['size'] + "-" + institution.name_slug
+            product = Item.objects.get(code=code.lower())
+            quantity_to_add = request.POST['quantity']
+        except (KeyError, Item.DoesNotExist):
+            return render(request, 'mystore/add_item.html',
+                          {'error_message': "Error al agregar. Intentalo de nuevo! product" + code})
+        except (KeyError, Institution.DoesNotExist):
+            return render(request, 'mystore/add_item.html',
+                          {'error_message': "Error al agregar. Intentalo de nuevo! ist"})
+
+        else:
+            product.quantity += int(quantity_to_add)
+            product.item_needed()
+            product.save()
+            return render(request, 'mystore/add_item.html',
+                          {'error_message': "Se ha agreado al inventortio! usa el formulario para agregar mas productos"})
+
+
+    return render(request, 'mystore/add_item.html')
+
