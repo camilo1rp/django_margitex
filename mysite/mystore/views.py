@@ -372,10 +372,10 @@ def add_item(request,):
             quantity_to_add = request.POST['quantity']
         except (KeyError, Item.DoesNotExist):
             return render(request, 'mystore/add_item.html',
-                          {'error_message': "Error al agregar. Intentalo de nuevo! product" + code})
+                          {'error_message': "Error al agregar. Intentalo de nuevo!"})
         except (KeyError, Institution.DoesNotExist):
             return render(request, 'mystore/add_item.html',
-                          {'error_message': "Error al agregar. Intentalo de nuevo! ist"})
+                          {'error_message': "Error al agregar. Intentalo de nuevo!"})
 
         else:
             product.quantity += int(quantity_to_add)
