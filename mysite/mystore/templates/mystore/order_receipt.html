@@ -3,10 +3,8 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
         <link href="{% static 'mystore/style.css' %}" rel="stylesheet">
-		<script src="{% static 'mystore/js/printing.js' %}" ></script>
     </head>
 <body>
-<div id="printableArea">
 <div id="invoice-POS">
 
     <center id="top">
@@ -70,12 +68,8 @@
 						<p class="legal"><strong>Gracias por su compra</strong> 	Por favor conserve este recibo.</p>
 					</div>
 
-</div>
 
   </div><!--End Invoice-->
-<section style="text-align:right">
-	<input type="button" onclick="printDiv('printableArea')" value="imprimir" />
-</section>
 
 </body>
 </html>

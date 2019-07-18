@@ -13,7 +13,7 @@
 <a>descuento: $ {{order.discount}}</a>
 <p>Total a pagar: $ {{order.debt}}</p>
 
-    <a href="{% url 'mystore:order_share' order.id %}">enviar email</a>
-    <a href="{% url 'mystore:receipt' order.id %}">ver factura</a>
+    <a href="{% url 'mystore:order_share' order.id %}" class="btn btn-primary">enviar email</a>
+    <a href="{% url 'mystore:receipt' order.id %}" class="btn btn-primary">ver factura</a>
 
 {% endblock %}

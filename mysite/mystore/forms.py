@@ -1,6 +1,7 @@
 from django import forms
-from .models import Order, Item, Qty, Client
-from django.forms.widgets import *
+
+from .models import Order, Qty, Client
+
 
 class OrderForm(forms.ModelForm):
 
@@ -17,13 +18,11 @@ class SelForm(forms.ModelForm):
         model = Qty
         fields = ('item',)
         labels = {'item':'producto'}
-"""
     def __init__(self, *args, **kwargs):
         super(SelForm, self).__init__(*args, **kwargs)
-        self.fields["item"].widget = CheckboxSelectMultiple()
+        #self.fields["item"].widget = CheckboxSelectMultiple()
+        self.fields['item'].empty_label = None
         
- 
-"""
 class ConfirmForm(forms.ModelForm):
 
     class Meta:

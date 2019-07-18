@@ -1,13 +1,29 @@
-p.bot{
-  font-size: 10px;
-  line-height: 1em;
+@media print {
+    html,
+    body {
+    width: 76mm;
+    height: 0auto;
+    margin: 0auto;
+    padding: 0;
 }
+  display: none;
+  }
 
+@page{
+    size: B5;
+    margin: 0;
+}
+html,
+body {
+    width: 76mm;
+    margin: 0;
+    padding: 0;
+}
 #invoice-POS{
   box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
   padding:2mm;
   margin: 0 auto;
-  width: 57mm;
+  width: 70mm;
   background: #FFF;
 
 }
@@ -47,7 +63,7 @@ p{
 .info{
   display: block;
   //float:left;
-  margin-left: 0;c
+  margin-left: 0;
 }
 #legalcopy{
   margin-top: 5mm;

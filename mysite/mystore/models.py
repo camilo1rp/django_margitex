@@ -1,9 +1,8 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.db.models import Sum
-from django.utils import timezone
 from datetime import datetime, timedelta
+
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
+from django.db import models
 
 
 class Client(models.Model):
@@ -12,10 +11,13 @@ class Client(models.Model):
     email = models.EmailField(blank=True)
     def __str__(self):
         return self.name + " - " + str(self.phone)[-3::]
+    class Meta:
+        verbose_name = 'cliente'
+        verbose_name_plural = 'clientes'
 
 class Order(models.Model):
     CONFIRM_CHOICES = ((False, 'Borrador'), (True, 'Confirmado'),)
-    order = models.CharField(max_length=25, verbose_name='descripcion', blank=True)
+    order = models.CharField(max_length=140, verbose_name='descripción / notas', blank=True)
     created = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(Client, null=True, on_delete=models.SET_NULL, verbose_name='cliente')
     added_by = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -28,7 +30,7 @@ class Order(models.Model):
                                default=0, verbose_name='descuento')
     debt = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='saldo')
     due_date = models.DateField(default= datetime.now()+timedelta(days=15),
-                                verbose_name= 'Fecha de entrega')
+                                verbose_name= 'Fecha de entrega', help_text="ejemplo: 2019-05-28")
     confirmed = models.BooleanField(choices=CONFIRM_CHOICES, default=False)
 
     def add_items(self):
@@ -47,12 +49,20 @@ class Order(models.Model):
     def __str__(self):
         return self.order
 
+    class Meta:
+        verbose_name = 'Pedido'
+        verbose_name_plural = 'Pedidos'
+
 class Institution(models.Model):
     name = models.CharField(max_length=50, verbose_name='nombre')
     name_slug = models.SlugField(unique=True, primary_key=True,
                                  max_length=50, verbose_name='codigo')
     def __str__(self):
         return self.name_slug
+
+    class Meta:
+        verbose_name = 'Institución'
+        verbose_name_plural = 'Instituciones'
 
 class Item(models.Model):
     name = models.CharField(max_length=25, verbose_name='nombre')
@@ -64,10 +74,10 @@ class Item(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name='creado')
     updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
     institution = models.ForeignKey(Institution, on_delete=models.CASCADE,
-                                    primary_key=False, verbose_name='institucion')
+                                    primary_key=False, verbose_name='institución')
     code = models.SlugField(max_length=25, verbose_name='codigo')
     prod_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0,
-                                verbose_name='precio produccion')
+                                verbose_name='precio producción')
     quantity_ordered = models.IntegerField(default=0, verbose_name='cantidad ordenada')
     quantity_needed = models.IntegerField(default=0, verbose_name='cantidad necesitada')
     def item_needed(self):
@@ -79,6 +89,10 @@ class Item(models.Model):
 
     def __str__(self):
         return self.code
+
+    class Meta:
+        verbose_name = 'producto'
+        verbose_name_plural = 'productos'
 
 
 class Qty(models.Model):

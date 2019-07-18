@@ -1,21 +1,21 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
-from django.views.generic import ListView
-from django.utils import timezone
-from .forms import OrderForm, SelForm, ConfirmForm, EmailPostForm, \
-    SearchForm, ClientSearchForm, ClientForm
-from django.db.models import Q
-from .models import Order, Item, Institution, Client
-from django.core.mail import send_mail
-from datetime import datetime, timedelta
+import weasyprint
+from django.conf import settings
 from django.contrib.postgres.search import SearchVector, SearchQuery, \
     SearchRank, TrigramSimilarity
+from django.core.mail import send_mail
+from django.core.paginator import Paginator, EmptyPage, \
+    PageNotAnInteger
 from django.db.models.functions import Greatest
-from django.views.generic.detail import SingleObjectMixin
-from django.core.paginator import Paginator, EmptyPage,\
-PageNotAnInteger
-from django.db.models import F
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.views.generic import ListView
+
+from .forms import OrderForm, SelForm, ConfirmForm, EmailPostForm, \
+    SearchForm, ClientSearchForm, ClientForm
+from .models import Order, Item, Institution, Client
+
 
 def IndexView(request):
     form = SearchForm()
@@ -30,7 +30,7 @@ def IndexView(request):
                 .filter(search=search_query).order_by('-rank')
     else:
         #results = Order.objects.filter(debt__gt=F('total')).order_by('created')
-        results = Order.objects.all().order_by('created')
+        results = Order.objects.all().order_by('-created')
     #context_object_name = 'orders'
     object_list = results
     paginator = Paginator(object_list, 10)  # 3 orders in each page
@@ -319,20 +319,21 @@ class InventoryListView(ListView):
 def client_detail(request, client):
     client_obj = get_object_or_404(Client, pk=client)
     #context_object_name = 'client'
-    results = client_obj.order_set.all()
+    results = client_obj.order_set.all().order_by('id')
     object_list = results
-    paginator = Paginator(object_list, 10)  # 3 client in each page
+    paginator = Paginator(object_list, 3)  # 3 client in each page
     page = request.GET.get('page')
     try:
-        client = paginator.page(page)
+        clients = paginator.page(page)
     except PageNotAnInteger:
     # If page is not an integer deliver the first page
-        client = paginator.page(1)
+        clients = paginator.page(1)
     except EmptyPage:
     # If page is out of range deliver last page of results
-        client = paginator.page(paginator.num_pages)
+        clients = paginator.page(paginator.num_pages)
 
-    return render(request, 'mystore/client_detail.html', {'client': client_obj,})
+    return render(request, 'mystore/client_detail.html', {'client': client_obj,
+                                                          'client_page': clients,})
 
 def add_client(request):
     if request.method == 'POST':
@@ -345,3 +346,17 @@ def add_client(request):
     else:
         client_form = ClientForm()
     return render(request, 'mystore/add_client.html', {'client_form': client_form})
+
+def order_pdf(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    tax = float(order.total) * 0.19
+    order.debts()
+    order.save()
+    html = render_to_string('mystore/order_receipt.html',{'order': order,
+                                                    'tax': tax})
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename=\
+    "order_{}.pdf"'.format(order.id)
+    weasyprint.HTML(string=html).write_pdf(response, stylesheets=[weasyprint.CSS(
+        settings.STATIC_ROOT + 'mystore/style.css')])
+    return response

@@ -19,10 +19,12 @@
             <div class="card">
                 <h5 class="card-header">Pedido: {{ order.id }}</h5>
                 <div class="card-body">
-                <li><a .card-link href="{% url 'mystore:detail' order.id  %}">{{ order.id }}</a></li>
-                <p>{{ order.client}} - Entrega: {{ order.due_date|date:"d - m - Y"}} </p>
-                <span class="badge badge-pill badge-primary">{{order.order}}</span>
+                    <li><p>{{ order.client}} - Entrega: {{ order.due_date|date:"d - m - Y"}} </p></li>
+                <span class="badge badge-pill badge-info">{{order.order}}</span>
                 <a .card-link href="{% url 'mystore:order_update' order.id %}" class="btn btn-outline-primary btn-sm"> actualizar</a>
+                {% if order.confirmed == False%}
+                    <a .card-link href="{% url 'mystore:detail' order.id %}" class="btn btn-primary btn-sm"> finalizar Pedido</a>
+                {% endif %}
                 </div>
             </div>
         {% endfor %}
