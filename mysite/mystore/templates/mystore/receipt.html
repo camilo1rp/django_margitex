@@ -4,6 +4,8 @@
         <title>{% block title %}{% endblock %}</title>
         <link href="{% static 'mystore/style.css' %}" rel="stylesheet">
 		<script src="{% static 'mystore/js/printing.js' %}" ></script>
+		<script src="{% static 'mystore/js/bootstrap.js' %}" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="{% static 'mystore/js/bootstrap.min.js' %}" ></script>
     </head>
 <body>
 <div id="printableArea">
@@ -76,6 +78,9 @@
 <section style="text-align:right">
 	<input type="button" onclick="printDiv('printableArea')" value="imprimir" />
 </section>
+<div>
+	<a href="{% url 'mystore:order_update' order.id %}" class="btn btn-outline-primary btn-sm">Volver</a>
+</div>
 
 </body>
 </html>

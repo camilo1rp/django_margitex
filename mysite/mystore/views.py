@@ -310,7 +310,7 @@ def client_search(request):
                                                         'results': results
                                                         })
 class InventoryListView(ListView):
-    queryset = Item.objects.all().order_by('quantity', '-quantity_needed')
+    queryset = Item.objects.all().order_by('-quantity_needed', 'quantity')
     context_object_name = 'products'
     paginate_by = 10
     template_name ="mystore/inventory.html"
