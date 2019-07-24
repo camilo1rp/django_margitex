@@ -14,7 +14,7 @@ from django.views.generic import ListView
 
 from .forms import OrderForm, SelForm, ConfirmForm, EmailPostForm, \
     SearchForm, ClientSearchForm, ClientForm
-from .models import Order, Item, Institution, Client
+from .models import Order, Item, Institution, Client, Payments
 
 
 def IndexView(request):
@@ -176,6 +176,8 @@ def confirmation(request, order_id):
         if request.method == 'POST':
             form = ConfirmForm(request.POST or None, instance=order)
             if form.is_valid():
+                pay=Payments(order=order, payment=request.POST['paid'])
+                pay.save()
                 form.save()
                 order.debts()
                 order.save()
@@ -224,19 +226,6 @@ def order_update(request, order_id, item_dispatch=None,
             product.save()
 
         return HttpResponseRedirect(reverse('mystore:order_update', args=(order.id,)))
-
-    if request.method == 'POST':
-        amount = request.POST['amount']
-        amount_int = int(amount)
-        order.debts()
-        if order.debt >= amount_int:
-            order.paid += amount_int
-            order.save()
-            return HttpResponseRedirect(reverse('mystore:order_update', args=(order.id,)))
-        else:
-            return render(request, 'mystore/order_update.html',
-                        {'order': order,
-                        'error_message': "Abono supera el costo total"})
 
     order.debts()
     order.save()
@@ -314,8 +303,6 @@ class InventoryListView(ListView):
     context_object_name = 'products'
     paginate_by = 10
     template_name ="mystore/inventory.html"
-
-
 def client_detail(request, client):
     client_obj = get_object_or_404(Client, pk=client)
     #context_object_name = 'client'
@@ -334,7 +321,6 @@ def client_detail(request, client):
 
     return render(request, 'mystore/client_detail.html', {'client': client_obj,
                                                           'client_page': clients,})
-
 def add_client(request):
     if request.method == 'POST':
         # An order was added
@@ -346,7 +332,6 @@ def add_client(request):
     else:
         client_form = ClientForm()
     return render(request, 'mystore/add_client.html', {'client_form': client_form})
-
 def order_pdf(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     tax = float(order.total) * 0.19
@@ -360,7 +345,6 @@ def order_pdf(request, order_id):
     weasyprint.HTML(string=html).write_pdf(response, stylesheets=[weasyprint.CSS(
         settings.STATIC_ROOT + 'mystore/style.css')])
     return response
-
 def add_item(request,):
     if request.method == 'POST':
         try:
@@ -386,4 +370,12 @@ def add_item(request,):
 
 
     return render(request, 'mystore/add_item.html')
+def order_payments(request):
+    order = get_object_or_404(Order, pk=request.POST['order_id'])
+    pay = Payments(order=order, payment=request.POST['amount'])
+    pay.save()
+    next = request.POST.get('next', '/')
+    print(next)
+    return HttpResponseRedirect(next)
+
 

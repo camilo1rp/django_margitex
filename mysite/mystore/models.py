@@ -108,6 +108,10 @@ class Qty(models.Model):
         return  self.quantity - self.pending
 
 
+class Payments(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    payment = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    created = models.DateTimeField(auto_now_add=True)
 
 
 

@@ -6,12 +6,20 @@
 <h3>Cliente: {{order.client}}</h3>
 <h4>Fecha de entrega: {{order.due_date|date:"d - m - Y"}}</h4>
 <p>{{ error_message}}</p>
-<form action= "." method="post">
+<form action= "{% url 'mystore:order_payments' %}" method="POST">
+    {% csrf_token %}
     <label for="amount">Abono</label>
     <input type="number" name="amount" id="amount" min="50">
-    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <input type="hidden" name="order_id" value="{{ order.id }}">
+
     <p><input type="submit" value="aplicar"></p>
 </form>
+<ul>
+    {% for pay in order.payments_set.all %}
+        <li><p>{{ pay.payment }} - {{ pay.created }}</p></li>
+    {% endfor %}
+</ul>
 <table class="table table-striped">
     <tr>
         <th scope="col">Producto</th>

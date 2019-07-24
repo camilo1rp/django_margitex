@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Item, Order, Institution, Client
+
+from .models import Item, Order, Institution, Client, Payments
 
 
 @admin.register(Client)
@@ -21,3 +22,7 @@ class ItemAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'order', 'client','total', 'paid',
                     'discount', 'debt', 'created', 'due_date')
+
+@admin.register(Payments)
+class PaymentsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'payment', 'created')
