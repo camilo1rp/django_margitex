@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator
 from django.db import models
 
 
@@ -25,7 +24,10 @@ class Order(models.Model):
     comments = models.TextField(max_length=140, blank=True, verbose_name='comentarios')
     total = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     paid = models.DecimalField(max_digits=9, decimal_places=2,
-                               default=0, verbose_name='abono', validators=[MinValueValidator(0.00)])
+                               default=0, verbose_name='abono')
+    #paid = models.DecimalField(max_digits=9, decimal_places=2,
+     #                          default=0, verbose_name='abono', validators=[MinValueValidator(0.00)])
+
     discount = models.DecimalField(max_digits=9, decimal_places=2,
                                default=0, verbose_name='descuento')
     debt = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='saldo')

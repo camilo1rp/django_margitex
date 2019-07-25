@@ -8,7 +8,7 @@
         <form action= "{% url 'mystore:order_payments' %}" method="POST">
             {% csrf_token %}
             <label for="amount">Abono</label>
-            <input type="number" name="amount" id="amount" min="50">
+            <input type="number" name="amount" id="amount">
             <input type="hidden" name="next" value="{{ request.path }}">
             <input type="hidden" name="order_id" value="{{ order.id }}">
             <p><input type="submit" value="aplicar"></p>
@@ -21,10 +21,11 @@
                 <th scope="col">Fecha</th>
             </tr>
             {% for pay in order.payments_set.all %}
-            <tr>
-                <td>{{ pay.payment }}</td>
-                <td>{{ pay.created }}</td>
-            </tr>
+                <tr>
+                    <td {% if int(pay.payment) > 0 %} class="alert alert-danger"{% endif %} > {{ pay.payment }}</td>
+                    <td>{{ pay.created }}</td>
+                </tr>
+
             {% endfor %}
         </table>
     </div>
