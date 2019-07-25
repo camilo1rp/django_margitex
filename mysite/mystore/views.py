@@ -224,11 +224,8 @@ def order_update(request, order_id, item_dispatch=None,
             product.quantity_ordered += 1
             product.item_needed()
             product.save()
-
         return HttpResponseRedirect(reverse('mystore:order_update', args=(order.id,)))
 
-    order.debts()
-    order.save()
     return render(request, 'mystore/order_update.html', {'order': order,
                                                          'order_items_qty': order_items_qty,
                                                          })
@@ -372,7 +369,11 @@ def add_item(request,):
     return render(request, 'mystore/add_item.html')
 def order_payments(request):
     order = get_object_or_404(Order, pk=request.POST['order_id'])
-    pay = Payments(order=order, payment=request.POST['amount'])
+    amount_paid = request.POST['amount']
+    order.paid += amount_paid
+    order.debts()
+    order.save()
+    pay = Payments(order=order, payment=amount_paid)
     pay.save()
     next = request.POST.get('next', '/')
     print(next)
