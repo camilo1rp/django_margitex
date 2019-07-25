@@ -46,9 +46,6 @@ class Order(models.Model):
     def debts(self):
         self.debt = self.total - self.paid - self.discount
 
-    def __str__(self):
-        return self.order
-
     class Meta:
         verbose_name = 'Pedido'
         verbose_name_plural = 'Pedidos'

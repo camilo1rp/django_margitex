@@ -3,11 +3,32 @@
 {% block title %}Confirmar Pedido{% endblock %}
 {% block content %}
 <h1>Pagos y descuentos</h1>
-<form action= "." method="post">
-    {{ form.as_p }}
-    {% csrf_token %}
-    <p><input type="submit" value="aplicar" class="btn btn-success"></p>
-</form>
+<div class="row">
+    <div class="col">
+        <form action= "{% url 'mystore:order_payments' %}" method="POST">
+            {% csrf_token %}
+            <label for="amount">Abono</label>
+            <input type="number" name="amount" id="amount" min="50">
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+            <p><input type="submit" value="aplicar"></p>
+        </form>
+    </div>
+    <div class="col">
+        <table class="table table-striped table-sm">
+            <tr>
+                <th scope="col">Abono</th>
+                <th scope="col">Fecha</th>
+            </tr>
+            {% for pay in order.payments_set.all %}
+            <tr>
+                <td>{{ pay.payment }}</td>
+                <td>{{ pay.created }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 <table class="table">
     <thead>
         <tr class="d-flex">

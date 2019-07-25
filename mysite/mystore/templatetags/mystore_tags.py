@@ -1,6 +1,6 @@
 from django import template
 
-from ..models import Institution, Item, Order, Payments
+from ..models import Institution, Item
 
 register = template.Library()
 
@@ -23,8 +23,3 @@ def all_products():
     products = Item.objects.order_by('name').values_list('name', flat=True).distinct()
     return {'products': products}
 
-@register.inclusion_tag('mystore/payment_list.html')
-def all_payments(id=0):
-    order = Order.objects.filter(id=id)
-    payment = Payments.objects.filter(order=order)
-    return {'payment': payment}

@@ -23,19 +23,18 @@
       <div class="info">
 
         <p>
-            Dirección : Transversal 12</br>
-            Email   : JohnDoe@gmail.com</br>
-            telefono   : 555-555-5555</br>
+            Dirección : Transversal 12<br>
+            Email   : JohnDoe@gmail.com<br>
+            telefono   : 555-555-5555<br>
         </p>
       </div>
     </div><!--End Invoice Mid-->
-
     <div class="bot">
 						<table>
 							<tr>
-								<td width="200" height="20"><p style="font-size:14px;">Producto </p></td>
-								<td width="50" height="20"><p style="font-size:14px;">Cantidad</p></td>
-								<td width="100" height="20"><p style="font-size:14px;">SubTotal</p></td>
+								<th width="200" height="20"><p style="font-size:14px;">Producto </p></th>
+								<th width="50" height="20"><p style="font-size:14px;">Cantidad</p></th>
+								<th width="100" height="20"><p style="font-size:14px;">SubTotal</p></th>
 							</tr>
 							{%for item_order in order.qty_set.all%}
 							<tr>
@@ -44,25 +43,23 @@
 								<td width="100" height="20"><p style="font-size:12px;">${{item_order.add_same_items}}</p></td>
 							</tr>
 							{% endfor %}
+						</table>
+						<br>
+						<table>
 							<tr>
-								<td width="50" height="10"></td>
-								<td width="50" height="10"><h3>IVA</h3></td>
-								<td width="50" height="10"><h3>${{ tax }}</h3></td>
+								<td width="100" height="10"></td>
+								<td width="50" height="10"><h2>Total</h2></td>
+								<td width="80" height="10"><h2>${{ order.add_all_items}}</h2></td>
 							</tr>
 							<tr>
-								<td width="50" height="10"></td>
-								<td width="50" height="10"><h3>Total</h3></td>
-								<td width="50" height="10"><h3>${{ order.add_all_items}}</h3></td>
+								<td width="100" height="10"></td>
+								<td width="50" height="10"><h2>Abono</h2></td>
+								<td width="80" height="10"><h2>${{ order.paid}}</h2></td>
 							</tr>
 							<tr>
-								<td width="50" height="10"></td>
-								<td width="50" height="10"><h3>Abono</h3></td>
-								<td width="50" height="10"><h3>${{ order.paid}}</h3></td>
-							</tr>
-							<tr>
-								<td width="50" height="10"></td>
-								<td width="50" height="10"><h2>A pagar</h2></td>
-								<td width="50" height="10"><p style="font-size:14px;">${{ order.debt}}</p></td>
+								<td width="100" height="10"></td>
+								<td width="50" height="10"><h2>SALDO</h2></td>
+								<td width="80" height="10"><p style="font-size:14px;">${{ order.debt}}</p></td>
 							</tr>
 
 						</table>

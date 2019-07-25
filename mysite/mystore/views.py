@@ -12,7 +12,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import ListView
 
-from .forms import OrderForm, SelForm, ConfirmForm, EmailPostForm, \
+from .forms import OrderForm, SelForm, EmailPostForm, \
     SearchForm, ClientSearchForm, ClientForm
 from .models import Order, Item, Institution, Client, Payments
 
@@ -48,7 +48,6 @@ def IndexView(request):
                                                    'query': query,
                                                    'orders': orders
                                                    })
-
 def detail(request, order_id, item_rmv=None, institution=None,
            size=None, item_dispatch=None, item_pending=None, item_missing=None):
     order = get_object_or_404(Order, pk=order_id)
@@ -140,8 +139,6 @@ def detail(request, order_id, item_rmv=None, institution=None,
                                                    'order': order,
                                                    'order_items_qty': order_items_qty,
                                                    'institution': institution, 'size': size},)
-
-
 def add_order(request):
 
     if request.method == 'POST':
@@ -154,7 +151,6 @@ def add_order(request):
     else:
         order_form = OrderForm()
     return render(request, 'mystore/add_order.html', {'order_form': order_form})
-
 def confirmation(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
 
@@ -172,24 +168,8 @@ def confirmation(request, order_id):
         order.save()
         return HttpResponseRedirect(reverse('mystore:confirmation',
                                             args=(order.id,)))
-    else:
-        if request.method == 'POST':
-            form = ConfirmForm(request.POST or None, instance=order)
-            if form.is_valid():
-                pay=Payments(order=order, payment=request.POST['paid'])
-                pay.save()
-                form.save()
-                order.debts()
-                order.save()
-            return HttpResponseRedirect(reverse('mystore:confirmation',
-                                                args=(order.id,)))
 
-    order.debts()
-    order.save()
-    form = ConfirmForm()
-    return render(request, 'mystore/confirmation.html', {'form': form,
-                                                         'order': order})
-
+    return render(request, 'mystore/confirmation.html', {'order': order})
 def receipt(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     tax = float(order.total) * 0.19
@@ -197,7 +177,6 @@ def receipt(request, order_id):
     order.save()
     return render(request, 'mystore/receipt.html', {'order': order,
                                                     'tax': tax})
-
 def order_update(request, order_id, item_dispatch=None,
                  item_missing=None, item_pending=0,):
     order = get_object_or_404(Order, pk=order_id)
@@ -229,7 +208,6 @@ def order_update(request, order_id, item_dispatch=None,
     return render(request, 'mystore/order_update.html', {'order': order,
                                                          'order_items_qty': order_items_qty,
                                                          })
-
 def order_share(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     sent= False
@@ -370,13 +348,13 @@ def add_item(request,):
 def order_payments(request):
     order = get_object_or_404(Order, pk=request.POST['order_id'])
     amount_paid = request.POST['amount']
-    order.paid += amount_paid
-    order.debts()
-    order.save()
-    pay = Payments(order=order, payment=amount_paid)
-    pay.save()
+    amount_paid = int(amount_paid)
+    if int(order.paid) > amount_paid:
+        order.paid += amount_paid
+        order.debts()
+        order.save()
+        pay = Payments(order=order, payment=amount_paid)
+        pay.save()
     next = request.POST.get('next', '/')
-    print(next)
     return HttpResponseRedirect(next)
-
 

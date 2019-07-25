@@ -37,14 +37,17 @@
         <td>${{item_order.item.price}}</td>
         <td>{{ item_order.quantity }}</td>
         <td>${{item_order.add_same_items}}</td>
-        <td><a href="{% url 'mystore:item_removed' order.id institution size item_order.id %}">Quitar</a></td>
+        <td><a href="{% url 'mystore:item_removed' order.id institution size item_order.id %}"
+        class="btn btn-danger">Quitar</a></td>
         <td>
             {{ item_order.pending }}
-            <a href="{% url 'mystore:items_pending' order.id institution size item_order.id item_order.pending %}"> PENDIENTE</a>
+            <a href="{% url 'mystore:items_pending' order.id institution size item_order.id item_order.pending %}"
+            class="btn btn-secondary btn-sm"> PENDIENTE</a>
         </td>
         <td>
             {{ item_order.get_dispatched_items }}
-            <a href="{% url 'mystore:item_dispatch' order.id institution size item_order.id item_order.pending %}"> ENTREGADO</a>
+            <a href="{% url 'mystore:item_dispatch' order.id institution size item_order.id item_order.pending %}"
+            class="btn btn-secondary btn-sm"> ENTREGADO</a>
         </td>
     </tr>
     {% endfor%}
