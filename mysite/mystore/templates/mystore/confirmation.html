@@ -22,7 +22,7 @@
             </tr>
             {% for pay in order.payments_set.all %}
                 <tr>
-                    <td {% if int(pay.payment) > 0 %} class="alert alert-danger"{% endif %} > {{ pay.payment }}</td>
+                    <td {% if int(pay.payment) < 0 %} class="alert alert-danger"{% endif %} > {{ pay.payment }}</td>
                     <td>{{ pay.created }}</td>
                 </tr>
 
