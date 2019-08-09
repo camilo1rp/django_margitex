@@ -211,11 +211,11 @@ def order_update(request, order_id, item_dispatch=None,
 def order_share(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     sent= False
-    products = "Poductos: "
+    products = []
     for product in order.qty_set.all():
         same_item_price = str(product.add_same_items())
         products += product.item.code + ": cantidad:" + str(product.quantity) +\
-                    " Precio: $" + same_item_price + " /// "
+                    " Precio: $" + same_item_price + ".   "
     #products = products[0:-2]
     if request.method == 'POST':
     # Form was submitted
@@ -349,12 +349,13 @@ def order_payments(request):
     order = get_object_or_404(Order, pk=request.POST['order_id'])
     amount_paid = request.POST['amount']
     amount_paid = int(amount_paid)
-    if int(order.paid) > amount_paid:
-        order.paid += amount_paid
-        order.debts()
-        order.save()
-        pay = Payments(order=order, payment=amount_paid)
-        pay.save()
+    #if order.debt > amount_paid:
+    order.paid += amount_paid
+    order.save()
+    order.debts()
+    order.save()
+    pay = Payments(order=order, payment=amount_paid)
+    pay.save()
     next = request.POST.get('next', '/')
     return HttpResponseRedirect(next)
 

@@ -74,7 +74,7 @@ class Item(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
     institution = models.ForeignKey(Institution, on_delete=models.CASCADE,
                                     primary_key=False, verbose_name='institución')
-    code = models.SlugField(max_length=25, verbose_name='codigo')
+    code = models.SlugField(max_length=50, verbose_name='codigo')
     prod_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0,
                                 verbose_name='precio producción')
     quantity_ordered = models.IntegerField(default=0, verbose_name='cantidad ordenada')

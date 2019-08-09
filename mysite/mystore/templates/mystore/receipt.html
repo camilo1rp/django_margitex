@@ -39,7 +39,7 @@
 							{%for item_order in order.qty_set.all%}
 							<tr>
 								<td width="200" height="20"><p style="font-size:10px;">{{item_order.item.code}}</p></td>
-								<td width="50" height="20"><p style="font-size:12px;text-align:center">{{item_order.quantity }}</p></td>
+								<td width="50" height="20"><p style="font-size:12px;text-align:center">{{item_order.quantity }} / P{{item_order.pending}}</p></td>
 								<td width="100" height="20"><p style="font-size:12px;">${{item_order.add_same_items}}</p></td>
 							</tr>
 							{% endfor %}
