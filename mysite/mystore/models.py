@@ -60,8 +60,8 @@ class Institution(models.Model):
         return self.name_slug
 
     class Meta:
-        verbose_name = 'Institución'
-        verbose_name_plural = 'Instituciones'
+        verbose_name = 'Institución/Categoria'
+        verbose_name_plural = 'Instituciones/Categoria'
 
 class Item(models.Model):
     name = models.CharField(max_length=25, verbose_name='nombre')

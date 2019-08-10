@@ -1,0 +1,54 @@
+p.bot{
+  font-size: 10px;
+  line-height: 1em;
+}
+
+#invoice-POS{
+  box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
+  padding:2mm;
+  margin: 0 auto;
+  width: 57mm;
+  background: #FFF;
+
+}
+
+h1{
+  font-size: 1.5em;
+  color: #222;
+}
+h2{font-size: 10px;
+}
+h3{
+  font-size: 0.6em;
+  font-weight: 500;
+  line-height: 1em;
+}
+p{
+  font-size: 10px;
+  line-height: 1em;
+}
+
+#top, #mid, #bot{ /* Targets all id with 'col-' */
+  border-bottom: 1px solid #EEE;
+}
+
+#top{min-height: 80px;}
+#mid{min-height: 50px;}
+#bot{min-height: 50px;}
+
+#top .logo{
+  //float: left;
+	height: 80px;
+	width: 80px;
+	background: url("martha.jpeg") no-repeat;
+	background-size: 80px 80px;
+}
+
+.info{
+  display: block;
+  //float:left;
+  margin-left: 0;c
+}
+#legalcopy{
+  margin-top: 5mm;
+}
