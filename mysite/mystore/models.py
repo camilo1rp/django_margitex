@@ -5,7 +5,7 @@ from django.db import models
 
 
 class Client(models.Model):
-    name = models.CharField(max_length=30, verbose_name='Nombre')
+    name = models.CharField(max_length=60, verbose_name='Nombre')
     phone =  models.DecimalField(max_digits=10, decimal_places=0, verbose_name='Telefono', unique=True)
     email = models.EmailField(blank=True)
     def __str__(self):
@@ -64,7 +64,7 @@ class Institution(models.Model):
         verbose_name_plural = 'Instituciones/Categoria'
 
 class Item(models.Model):
-    name = models.CharField(max_length=25, verbose_name='nombre')
+    name = models.CharField(max_length=90, verbose_name='nombre')
     size = models.CharField(max_length=25, verbose_name='talla')
     price = models.DecimalField(max_digits=9, decimal_places=2, default=0,
                                 verbose_name='precio')
@@ -74,7 +74,7 @@ class Item(models.Model):
     updated = models.DateTimeField(auto_now=True, verbose_name='actualizado')
     institution = models.ForeignKey(Institution, on_delete=models.CASCADE,
                                     primary_key=False, verbose_name='institución')
-    code = models.SlugField(max_length=50, verbose_name='codigo')
+    code = models.SlugField(max_length=90, verbose_name='codigo')
     prod_cost = models.DecimalField(max_digits=9, decimal_places=2, default=0,
                                 verbose_name='precio producción')
     quantity_ordered = models.IntegerField(default=0, verbose_name='cantidad ordenada')
