@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.text import slugify
 
 
 class Client(models.Model):
@@ -79,6 +80,7 @@ class Item(models.Model):
                                 verbose_name='precio producción')
     quantity_ordered = models.IntegerField(default=0, verbose_name='cantidad ordenada')
     quantity_needed = models.IntegerField(default=0, verbose_name='cantidad necesitada')
+
     def item_needed(self):
         sum = self.quantity_ordered - self.quantity
         if sum < 0:
@@ -88,6 +90,12 @@ class Item(models.Model):
 
     def __str__(self):
         return self.code
+
+    def save(self, *args, **kwargs):
+        #if not self.code:
+        self.code = slugify(self.name) + slugify(self.size) + slugify(self.institution)
+        super(Item, self).save(*args, **kwargs)
+
 
     class Meta:
         verbose_name = 'producto'
