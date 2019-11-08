@@ -274,9 +274,10 @@ class ItemSearchListView(ListView):
         if self.form.is_valid():
             self.query = self.form.cleaned_data['producto']
             if self.query:
-                return Item.objects.annotate(similarity=Greatest(TrigramSimilarity('name', self.query),
-                                                                  TrigramSimilarity('code', self.query))
-                                              ).filter(similarity__gt=0.1).order_by('-similarity')
+                search_vector = SearchVector('code', 'institution')
+                search_query = SearchQuery(self.query)
+                return Item.objects.annotate(search=search_vector, rank=SearchRank(search_vector, search_query)) \
+                    .filter(search=search_query).order_by('-rank')
 
 
     def get_context_data(self, *args, **kwargs):
