@@ -1,0 +1,38 @@
+{% extends "mystore/base.html" %}
+{% block title %}Buscar Producto{% endblock %}
+{% block content %}
+
+{% if products %}
+<h1>Productos que contienen "{{ query }}"</h1>
+<h3>
+    {% with products.count as total_results %}
+    Encontrado: {{ total_results }} resultado{{ total_results|pluralize }}
+    {% endwith %}
+</h3>
+<p><a href="{% url 'mystore:item_search' %}">Buscar otra vez</a></p>
+{% for item in products %}
+    <div class="card">
+                <h5 class="card-header">{{ item.name|title }}  {{ item.size}} - {{ item.institution.name }}
+                </h5>
+                <div class="card-title">
+                    <ul class="list-group">
+                        <li class="list-group-item">Cantidad en inventario: {{ item.quantity }}  -
+                            Cantidad apartada: {{item.quantity_ordered }}</li>
+                        <li class="list-group-item"><h3>Cantidad necesitada: {{ item.quantity_needed }}</h3></li>
+                    </ul>
+                    <span class="badge badge-pill badge-primary">{{ item.code }}</span>
+                </div>
+    </div>
+{% empty %}
+<p>Tu busqueda no produjo ningun resultado</p>
+{% endfor %}
+{% else %}
+<h1>Buscar Productos</h1>
+<form class="form-inline"  action="." method="get">
+    <div class="form-group mb-2">
+        {{ form.as_table }}
+        <input type="submit" class="btn btn-outline-primary " value="Buscar" >
+    </div>
+</form>
+{% endif %}
+{% endblock %}

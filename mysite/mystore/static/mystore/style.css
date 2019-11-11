@@ -41,7 +41,7 @@ h3{
 }
 p{
   font-size: 10px;
-  line-height: 1em;
+  line-height: 1.2em;
 }
 
 #top, #mid, #bot{ /* Targets all id with 'col-' */
@@ -67,4 +67,26 @@ p{
 }
 #legalcopy{
   margin-top: 5mm;
+}
+/* nth-child(1) = the first td in each tr */
+td {
+text-align: left;
+height:20px;
+}
+td:nth-child(1).description {
+  width:110px;
+    border-right:1px dotted gray;
+}
+
+td:nth-child(2).description {
+  width:30px;
+  border-right:1px dotted gray;
+}
+td:nth-child(3).description {
+  width:30px;
+  border-right:1px dotted gray;
+}
+td:nth-child(4).description {
+  width:30px;
+  text-align: right;
 }

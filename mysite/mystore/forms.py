@@ -47,3 +47,6 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ('name', 'email', 'phone')
+
+class ItemSearchForm(forms.Form):
+    producto = forms.CharField(required=False)

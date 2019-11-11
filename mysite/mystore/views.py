@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.views.generic import ListView
 
 from .forms import OrderForm, SelForm, EmailPostForm, \
-    SearchForm, ClientSearchForm, ClientForm
+    SearchForm, ClientSearchForm, ClientForm, ItemSearchForm
 from .models import Order, Item, Institution, Client, Payments
 
 
@@ -48,6 +48,7 @@ def IndexView(request):
                                                    'query': query,
                                                    'orders': orders
                                                    })
+
 def detail(request, order_id, item_rmv=None, institution=None,
            size=None, item_dispatch=None, item_pending=None, item_missing=None):
     order = get_object_or_404(Order, pk=order_id)
@@ -139,6 +140,7 @@ def detail(request, order_id, item_rmv=None, institution=None,
                                                    'order': order,
                                                    'order_items_qty': order_items_qty,
                                                    'institution': institution, 'size': size},)
+
 def add_order(request):
 
     if request.method == 'POST':
@@ -151,6 +153,7 @@ def add_order(request):
     else:
         order_form = OrderForm()
     return render(request, 'mystore/add_order.html', {'order_form': order_form})
+
 def confirmation(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
 
@@ -168,8 +171,8 @@ def confirmation(request, order_id):
         order.save()
         return HttpResponseRedirect(reverse('mystore:confirmation',
                                             args=(order.id,)))
-
     return render(request, 'mystore/confirmation.html', {'order': order})
+
 def receipt(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     tax = float(order.total) * 0.19
@@ -177,6 +180,7 @@ def receipt(request, order_id):
     order.save()
     return render(request, 'mystore/receipt.html', {'order': order,
                                                     'tax': tax})
+
 def order_update(request, order_id, item_dispatch=None,
                  item_missing=None, item_pending=0,):
     order = get_object_or_404(Order, pk=order_id)
@@ -208,6 +212,7 @@ def order_update(request, order_id, item_dispatch=None,
     return render(request, 'mystore/order_update.html', {'order': order,
                                                          'order_items_qty': order_items_qty,
                                                          })
+
 def order_share(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     sent= False
@@ -240,6 +245,7 @@ def order_share(request, order_id):
                                                   'form': form,
                                                   'sent': sent,
                                                   })
+
 def order_search(request):
     form = SearchForm()
     query = None
@@ -256,6 +262,29 @@ def order_search(request):
                                                     'query': query,
                                                     'results': results
                                                     })
+
+class ItemSearchListView(ListView):
+    template_name = "mystore/item_search.html"
+    model = Item
+    form_class = ItemSearchForm
+    context_object_name = 'products'
+    query = None
+    def get_queryset(self):
+        self.form = self.form_class(self.request.GET)
+        if self.form.is_valid():
+            self.query = self.form.cleaned_data['producto']
+            if self.query:
+                return Item.objects.annotate(similarity=Greatest(TrigramSimilarity('name', self.query),
+                                                                  TrigramSimilarity('code', self.query))
+                                              ).filter(similarity__gt=0.1).order_by('-similarity')
+
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ItemSearchListView, self).get_context_data(*args, **kwargs)
+        context['form'] = self.form
+        context['query'] = self.query
+        return context
+
 def client_search(request):
     form = ClientSearchForm()
     query = None
@@ -273,11 +302,13 @@ def client_search(request):
                                                         'query': query,
                                                         'results': results
                                                         })
+
 class InventoryListView(ListView):
     queryset = Item.objects.all().order_by('-quantity_needed', 'quantity')
     context_object_name = 'products'
     paginate_by = 10
     template_name ="mystore/inventory.html"
+
 def client_detail(request, client):
     client_obj = get_object_or_404(Client, pk=client)
     #context_object_name = 'client'
@@ -296,6 +327,7 @@ def client_detail(request, client):
 
     return render(request, 'mystore/client_detail.html', {'client': client_obj,
                                                           'client_page': clients,})
+
 def add_client(request):
     if request.method == 'POST':
         # An order was added
@@ -307,6 +339,7 @@ def add_client(request):
     else:
         client_form = ClientForm()
     return render(request, 'mystore/add_client.html', {'client_form': client_form})
+
 def order_pdf(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     tax = float(order.total) * 0.19
@@ -320,6 +353,7 @@ def order_pdf(request, order_id):
     weasyprint.HTML(string=html).write_pdf(response, stylesheets=[weasyprint.CSS(
         settings.STATIC_ROOT + 'mystore/style.css')])
     return response
+
 def add_item(request,):
     if request.method == 'POST':
         try:
@@ -345,6 +379,7 @@ def add_item(request,):
 
 
     return render(request, 'mystore/add_item.html')
+
 def order_payments(request):
     order = get_object_or_404(Order, pk=request.POST['order_id'])
     amount_paid = request.POST['amount']

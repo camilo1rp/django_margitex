@@ -14,64 +14,73 @@
     <center id="top">
       <div class="logo"></div>
       <div class="info">
-        <h1>MARGITEX</h1>
-		   <h2>Martha Romero</h2>
+        <h1>Martha Romero</h1>
+		  <h2>Uniformes y Dotaciones</h2>
+		  <h2>Moda para Dama</h2>
       </div><!--End Info-->
     </center><!--End InvoiceTop-->
-
     <div id="mid">
       <div class="info">
-
         <p>
-            Dirección : Transversal 12<br>
-            Email   : JohnDoe@gmail.com<br>
-            telefono   : 555-555-5555<br>
+            Dirección : Tv 12 # 16b -32 barrio balmoral<br>
+            Email   : martha644@hotmail.com<br>
+            telefono   : 3123144182<br>
+        </p>
+      </div>
+    </div><!--End Invoice Mid-->
+	   <div id="mid">
+      <div class="info">
+        <p>
+            Cliente : {{order.client.name}}<br>
+            Numero de Pedido : {{order.id}}<br>
+            Fecha y hora: {{order.created}}<br>
         </p>
       </div>
     </div><!--End Invoice Mid-->
     <div class="bot">
-						<table>
-							<tr>
-								<th width="200" height="20"><p style="font-size:14px;">Producto </p></th>
-								<th width="50" height="20"><p style="font-size:14px;">Cantidad</p></th>
-								<th width="100" height="20"><p style="font-size:14px;">SubTotal</p></th>
-							</tr>
-							{%for item_order in order.qty_set.all%}
-							<tr>
-								<td width="200" height="20"><p style="font-size:10px;">{{item_order.item.code}}</p></td>
-								<td width="50" height="20"><p style="font-size:12px;text-align:center">{{item_order.quantity }} / P{{item_order.pending}}</p></td>
-								<td width="100" height="20"><p style="font-size:12px;">${{item_order.add_same_items}}</p></td>
-							</tr>
-							{% endfor %}
-						</table>
-						<br>
-						<table>
-							<tr>
-								<td width="100" height="10"></td>
-								<td width="50" height="10"><h2>Total</h2></td>
-								<td width="80" height="10"><h2>${{ order.add_all_items}}</h2></td>
-							</tr>
-							<tr>
-								<td width="100" height="10"></td>
-								<td width="50" height="10"><h2>Abono</h2></td>
-								<td width="80" height="10"><h2>${{ order.paid}}</h2></td>
-							</tr>
-							<tr>
-								<td width="100" height="10"></td>
-								<td width="50" height="10"><h2>SALDO</h2></td>
-								<td width="80" height="10"><p style="font-size:14px;">${{ order.debt}}</p></td>
-							</tr>
-
-						</table>
+		<table>
+			<tr>
+				<td class="description"><p style="font-size:12px;">Referencia</p></td>
+				<td class="description"><p style="font-size:11px;">Precio</p></td>
+				<td class="description"><p style="font-size:11px;">Cant.</p></td>
+				<td class="description"><p style="font-size:11px;">Subtotal</p></td>
+			</tr>
+			{%for item_order in order.qty_set.all%}
+			<tr>
+				<td class="description"><p style="font-size:9px;">{{item_order.item.code}}</p></td>
+				<td class="description"><p style="font-size:9px;text-align:center">${{item_order.item.price }}</p></td>
+				<td class="description"><p style="font-size:9px;text-align:center">{{item_order.quantity }}
+					{% if item_order.pending > 0%}PTE:{{item_order.pending}}{% endif%}</p></td>
+				<td class="description"><p style="font-size:9px;">${{item_order.add_same_items}}</p></td>
+			</tr>
+			{% endfor %}
+		</table>
+		<br>
+		<table>
+			<tr>
+				<td width="100" height="10"></td>
+				<td width="50" height="10"><h2>Total</h2></td>
+				<td width="80" height="10"><h2>${{ order.add_all_items}}</h2></td>
+			</tr>
+			<tr>
+				<td width="100" height="10"></td>
+				<td width="50" height="10"><h2>Abono</h2></td>
+				<td width="80" height="10"><h2>${{ order.paid}}</h2></td>
+			</tr>
+			<tr>
+				<td width="100" height="10"></td>
+				<td width="50" height="10"><h2>Saldo</h2></td>
+				<td width="80" height="10"><p style="font-size:14px;">${{ order.debt}}</p></td>
+			</tr>
+		</table>
 	</div>
 
-					<div id="legalcopy">
-						<p class="legal"><strong>Gracias por su compra</strong>Por favor conserve este recibo.</p>
-					</div>
-
+	<div id="legalcopy">
+		<p class="legal"><strong>Gracias por su compra. Despues de 30 dia no se aceptan reclamos ni
+			devoluciones para garantia o apartados.</strong> 	Por favor conserve este recibo.</p>
+	</div>
 </div>
-
-  </div><!--End Invoice-->
+</div><!--End Invoice-->
 <section style="text-align:right">
 	<input type="button" onclick="printDiv('printableArea')" value="imprimir" />
 </section>
