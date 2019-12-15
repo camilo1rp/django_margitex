@@ -1,0 +1,204 @@
+{% load mystore_tags%}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Factura</title>
+        <link href="{% static 'mystore/bootstrap.css' %}" rel="stylesheet">
+        <script src="{% static 'mystore/js/bootstrap.js' %}" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="{% static 'mystore/js/bootstrap.min.js' %}" ></script>
+
+        <style>
+        .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        border: 1px solid #eee;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+        font-size: 16px;
+        line-height: 24px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        color: #555;
+    }
+
+    .invoice-box table {
+        width: 100%;
+        line-height: inherit;
+        text-align: left;
+    }
+
+    .invoice-box table td {
+        padding: 5px;
+        vertical-align: top;
+    }
+
+    .invoice-box table tr td:nth-child(4) {
+        text-align: right;
+    }
+    .invoice-box table tr td:nth-child(3) {
+        text-align: center;
+    }
+
+    .invoice-box table tr.top table td {
+        padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.top table td.title {
+        font-size: 45px;
+        line-height: 45px;
+        color: #333;
+    }
+
+    .invoice-box table tr.information table td {
+        padding-bottom: 40px;
+    }
+
+    .invoice-box table tr.heading td {
+        background: #eee;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+    }
+
+    .invoice-box table tr.details td {
+        padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.item td{
+        border-bottom: 1px solid #eee;
+
+    }
+
+    .invoice-box table tr.item.last td {
+        border-bottom: none;
+    }
+
+    .invoice-box table tr.total td:nth-child(4) {
+        border-top: 2px solid #eee;
+        font-weight: bold;
+    }
+
+    @media only screen and (max-width: 600px) {
+        .invoice-box table tr.top table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+
+        .invoice-box table tr.information table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+    }
+
+    /** RTL **/
+    .rtl {
+        direction: rtl;
+        font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    }
+
+    .rtl table {
+        text-align: right;
+    }
+
+    .rtl table tr td:nth-child(2) {
+        text-align: left;
+    }
+
+    #top .logo{
+  <!--//float: left;-->
+	<!--height: 80px;-->
+	<!--width: 80px;-->
+	<!--background: url("martha.jpeg") no-repeat;-->
+	<!--background-size: 80px 80px;-->
+}
+
+</style>
+    </head>
+    <body>
+    <div id="container">
+        <div class="invoice-box">
+            <table cellpadding="0" cellspacing="0">
+            <tr class="top">
+                <td colspan="4" >
+                    <table>
+                        <tr>
+                            <td>
+                                <img src="/static/mystore/martha1.png" style="width:100%; max-width:200px;">
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                Dirección : Transversal 12 # 16b-32 barrio balmoral<br>
+                                Email   : martha644@hotmail.com<br>
+                                telefono   : 3123144182<br>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="information">
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td>
+                                Cliente : {{order.client.name}}<br>
+                                Factura #: {{ order.id }} <br>
+                                Fecha y hora:: {{order.created|date:'d-m-Y, g:ia'}} <br>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td class="alert alert-light">
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="heading">
+                <td>Referencia</td>
+				<td>Precio</td>
+				<td>Cantidad</td>
+				<td>Subtotal</td>
+            </tr>
+            {%for item_order in order.qty_set.all%}
+                {% with item=item_order %}
+                <tr class="item">
+                    <td>
+                        {{item.item.code}}
+                    </td>
+
+                    <td>
+                        ${{item.item.price }}
+                    </td>
+                    <td>
+                        {{item.quantity }}{% if item.pending > 0 %} / Pendiente: {{ item.pending }}{% endif %}
+                    <td>
+                        ${{item.add_same_items}}
+                    </td>
+                </tr>
+                {% endwith %}
+            {% endfor %}
+
+                <tr class="total">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
+                    <td>
+                       Total: ${{ order.add_all_items}}
+                    </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+<div id="legalcopy">
+		<p class="legal"><strong>Gracias por su compra. Despues de 30 dias no se aceptan reclamos ni
+			devoluciones para garantia o apartados. Por favor conserve este recibo.</strong></p>
+	</div>
+    </div>
+        </div>
+
+    </body>
+</html>

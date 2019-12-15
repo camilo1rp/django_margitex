@@ -10,6 +10,9 @@
         <link href="{% static 'mystore/bootstrap.css' %}" rel="stylesheet">
         <script src="{% static 'mystore/js/bootstrap.js' %}" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="{% static 'mystore/js/bootstrap.min.js' %}" ></script>
+        {% block styles %}
+
+        {% endblock %}
     </head>
     <body>
         <ul class="nav justify-content-end">

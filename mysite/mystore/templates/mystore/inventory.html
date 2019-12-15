@@ -5,12 +5,14 @@
 {% block content %}
     {% if products %}
 
-        <h2>Lista de productos</h2>
-            <ul>
-        {% for item in products %}
+<h2>Lista de productos</h2>
+<ul>
+    <div class="row">
+
+    {% for item in products %}
+ <div class="col-md-6">
             <div class="card">
-                <h5 class="card-header">{{ item.name|title }}  {{ item.size}} - {{ item.institution.name }}
-                </h5>
+                <h5 class="card-header">{{ item.name|title }}  {{ item.size}} - {{ item.institution.name }}</h5>
                 <div class="card-title">
                     <ul class="list-group">
                         <li class="list-group-item">Cantidad en inventario: {{ item.quantity }}  -
@@ -20,8 +22,10 @@
                     <span class="badge badge-pill badge-primary">{{ item.code }}</span>
                 </div>
             </div>
-        {% endfor %}
-        </ul>
+     </div>
+    {% endfor %}
+        </div>
+</ul>
     {% else %}
         <p>Ningun producto ha sido agregado</p>
      {% endif %}

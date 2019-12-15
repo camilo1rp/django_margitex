@@ -2,7 +2,8 @@ import weasyprint
 from django.conf import settings
 from django.contrib.postgres.search import SearchVector, SearchQuery, \
     SearchRank, TrigramSimilarity
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
+from email.mime.image import MIMEImage
 from django.core.paginator import Paginator, EmptyPage, \
     PageNotAnInteger
 from django.db.models.functions import Greatest
@@ -11,7 +12,6 @@ from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import ListView
-
 from .forms import OrderForm, SelForm, EmailPostForm, \
     SearchForm, ClientSearchForm, ClientForm, ItemSearchForm
 from .models import Order, Item, Institution, Client, Payments
@@ -178,7 +178,7 @@ def receipt(request, order_id):
     tax = float(order.total) * 0.19
     order.debts()
     order.save()
-    return render(request, 'mystore/receipt.html', {'order': order,
+    return render(request, 'mystore/factura.html', {'order': order,
                                                     'tax': tax})
 
 def order_update(request, order_id, item_dispatch=None,
@@ -215,34 +215,47 @@ def order_update(request, order_id, item_dispatch=None,
 
 def order_share(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
-    sent= False
-    products = []
-    for product in order.qty_set.all():
-        same_item_price = str(product.add_same_items())
-        products += product.item.code + ": cantidad:" + str(product.quantity) +\
-                    " Precio: $" + same_item_price + ".   "
-    #products = products[0:-2]
-    if request.method == 'POST':
-    # Form was submitted
-        form = EmailPostForm(request.POST)
-        if form.is_valid():
-        # Form fields passed validation
-            cd = form.cleaned_data
-            subject = 'Gracias por tu compra, Margitex. Pedido: N0{}'.format(order.id)
-            message = '{} tu pedido ha sido recibido\n\nProductos: {}. \n total:{} \n'\
-                .format(cd['name'], products, order.total)
-            send_mail(subject, message, 'margitex@margitex.com',[cd['to']])
-            sent= True
-        # ... send email
-    else:
-        form = EmailPostForm({'name':order.client.name,
-                              'email':'margitex@gmail.com',
-                              'to': order.client.email,
-                              'content':products
-                              })
+    html_email = render_to_string("mystore/factura_email.html",{'order':order})
+    subject_email = "Tu recibo de compra, Margitex"
+    from_email = "margitex@margitex.com"
+    to_email = order.client.email
+    msg = EmailMultiAlternatives(subject_email,html_email, from_email, [to_email])
+    msg.attach_alternative(html_email, "mystore/factura.html")
+    msg.content_subtype = 'html'
+    msg.mixed_subtype = 'related'
+
+    img = open("static/mystore/martha1.png",'rb').read()
+    image =MIMEImage(img, 'png')
+    image.add_header('Content-ID','<{}>'.format('/static/mystore/martha1.png'))
+    image.add_header('Content-Disposition', 'inline', filename='/static/mystore/martha1.png')
+    msg.attach(image)
+    msg.send()
+    sent =True
+    # for product in order.qty_set.all():
+    #     same_item_price = str(product.add_same_items())
+    #     products += product.item.code + ": cantidad:" + str(product.quantity) +\
+    #                 " Precio: $" + same_item_price + ".   "
+    # #products = products[0:-2]
+    # if request.method == 'POST':
+    # # Form was submitted
+    #     form = EmailPostForm(request.POST)
+    #     if form.is_valid():
+    #     # Form fields passed validation
+    #         cd = form.cleaned_data
+    #         subject = 'Gracias por tu compra, Margitex. Pedido: N0{}'.format(order.id)
+    #         message = '{} tu pedido ha sido recibido\n\nProductos: {}. \n total:{} \n'\
+    #             .format(cd['name'], products, order.total)
+    #         send_mail(subject, message, 'margitex@margitex.com',[cd['to']])
+    #         sent= True
+    #     # ... send email
+    # else:
+    #     form = EmailPostForm({'name':order.client.name,
+    #                           'email':'margitex@gmail.com',
+    #                           'to': order.client.email,
+    #                           'content':products
+    #                           })
 
     return render(request, 'mystore/share.html', {'order': order,
-                                                  'form': form,
                                                   'sent': sent,
                                                   })
 

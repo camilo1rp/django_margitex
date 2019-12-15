@@ -35,6 +35,7 @@ class Order(models.Model):
     due_date = models.DateField(default= datetime.now()+timedelta(days=15),
                                 verbose_name= 'Fecha de entrega', help_text="ejemplo: 2019-05-28")
     confirmed = models.BooleanField(choices=CONFIRM_CHOICES, default=False)
+    completed = models.BooleanField(default=False)
 
     def add_items(self):
         return self.items.aggregate(total=models.Sum('price'))['total']
@@ -48,6 +49,15 @@ class Order(models.Model):
 
     def debts(self):
         self.debt = self.total - self.paid - self.discount
+
+    def save(self, *args, **kwargs):
+        if self.total == self.paid and self.paid != 0:
+            self.completed = True
+        super(Order, self).save(*args, **kwargs)
+
+
+
+
 
     class Meta:
         verbose_name = 'Pedido'
